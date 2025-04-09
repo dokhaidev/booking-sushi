@@ -10,9 +10,9 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('table_id')->constrained('tables')->onDelete('cascade');
-            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('cascade');
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled']);
+            $table->enum('status', ['pending', 'confirmed', 'checked_in', 'completed', 'cancelled']);
             $table->date('reservation_date')->nullable();
             $table->time('reservation_time')->nullable();
             $table->integer('guests');
