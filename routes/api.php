@@ -19,7 +19,7 @@ Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 
 
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
-Route::post('/orders', [OrderController::class, 'store']);             // Tạo đơn đặt mới
+Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
 
 // 🔍 Chi tiết, cập nhật, xoá
 Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
@@ -37,3 +37,5 @@ Route::patch('/orders/{id}/check-in', [OrderController::class, 'checkIn']);     
 Route::patch('/orders/{id}/check-out', [OrderController::class, 'checkOut']);   // Check-out
 
 
+// menu
+Route::get('/menu',[MenuController::class,'index']);

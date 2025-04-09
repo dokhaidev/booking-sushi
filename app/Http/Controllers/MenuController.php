@@ -11,7 +11,7 @@ class MenuController extends Controller
     // Danh sách menu
     public function index()
     {
-        return response()->json(Menu::with('category')->latest()->get());
+        return response()->json(Menu::all());
     }
 
     // Tạo món mới
