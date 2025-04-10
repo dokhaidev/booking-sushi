@@ -21,12 +21,12 @@ Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
 Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
 
-// 🔍 Chi tiết, cập nhật, xoá
+// Chi tiết, cập nhật, xoá
 Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
-Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
-Route::delete('/orders/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
+Route::patch('/updateStatus-order/{id}/status', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
+Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
 
-// 📆 Lịch theo ngày
+// Lịch theo ngày
 Route::get('/orders/date/{date}', [OrderController::class, 'getByDate']);  // Lấy đơn theo ngày
 
 //  Gợi ý bàn

@@ -35,14 +35,23 @@ class OrderController extends Controller
 
     //  Tạo đơn mới
     public function store(Request $request)
-    {
-        $data = $request->all();
+{
+    $validated = $request->validate([
+        'reservation_date' => 'required|date',
+        'reservation_time' => 'required',
+        'guests' => 'required|integer|min:1',
+        'guest_name' => 'required|string|max:255',
+        'guest_phone' => 'required|string|max:20',
+        'guest_email' => 'required|email',
+        'total_price' => 'numeric|min:0',
+    ]);
 
-        // Không kiểm tra bàn có bận không, không validate
-        $order = Order::create($data);
+    $validated['status'] = 'pending';
 
-        return response()->json(['message' => 'Order placed successfully', 'order' => $order], 201);
-    }
+    $order = Order::create($validated);
+
+    return response()->json(['message' => 'Reservation created', 'data' => $order], 201);
+}
 
     // Cập nhật trạng thái
     public function updateStatus(Request $request, $id)
@@ -54,7 +63,7 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order status updated', 'order' => $order]);
     }
 
-    // 🗑 Xoá đơn
+    //  Xoá đơn
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
@@ -85,6 +94,4 @@ class OrderController extends Controller
 
         return response()->json($tables);
     }
-
-
 }

@@ -12,15 +12,16 @@ class Order extends Model
     protected $fillable = [
         'table_id',
         'customer_id',
-        'name',
-        'email',
-        'phone',
+        'guest_name',
+        'guest_phone',
+        'guest_email',
         'total_price',
         'status',
         'reservation_date',
         'reservation_time',
         'guests',
     ];
+
 
     public function table()
     {

@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
-    // Danh sách menu
+    // Lấy danh sách menu
     public function index()
     {
-        return response()->json(Menu::all());
+        $menus = Menu::all();
+        return response()->json($menus);
     }
 
     // Tạo món mới
@@ -31,26 +32,40 @@ class MenuController extends Controller
         }
 
         $menu = Menu::create($validated);
-        return response()->json(['message' => 'Menu created', 'data' => $menu], 201);
+
+        return response()->json([
+            'message' => 'Menu created successfully.',
+            'data' => $menu
+        ], 201);
     }
 
-    // Chi tiết món
+    // Lấy chi tiết món
     public function show($id)
     {
-        return response()->json(Menu::with('category')->findOrFail($id));
+        $menu = Menu::with('category')->find($id);
+
+        if (!$menu) {
+            return response()->json(['message' => 'Menu not found.'], 404);
+        }
+
+        return response()->json($menu);
     }
 
     // Cập nhật món
     public function update(Request $request, $id)
     {
-        $menu = Menu::findOrFail($id);
+        $menu = Menu::find($id);
+
+        if (!$menu) {
+            return response()->json(['message' => 'Menu not found.'], 404);
+        }
 
         $validated = $request->validate([
             'category_id' => 'sometimes|exists:categories,id',
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
-            'status' => 'in:available,unavailable',
+            'status' => 'sometimes|in:available,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -62,18 +77,28 @@ class MenuController extends Controller
         }
 
         $menu->update($validated);
-        return response()->json(['message' => 'Menu updated', 'data' => $menu]);
+
+        return response()->json([
+            'message' => 'Menu updated successfully.',
+            'data' => $menu
+        ]);
     }
+
     // Xoá món
     public function destroy($id)
     {
-        $menu = Menu::findOrFail($id);
+        $menu = Menu::find($id);
+
+        if (!$menu) {
+            return response()->json(['message' => 'Menu not found.'], 404);
+        }
 
         if ($menu->image) {
             Storage::disk('public')->delete($menu->image);
         }
 
         $menu->delete();
-        return response()->json(['message' => 'Menu deleted']);
+
+        return response()->json(['message' => 'Menu deleted successfully.']);
     }
 }
