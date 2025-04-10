@@ -32,10 +32,5 @@ Route::get('/orders/date/{date}', [OrderController::class, 'getByDate']);  // L�
 //  Gợi ý bàn
 Route::get('/orders/suggest-table', [OrderController::class, 'suggestTable']); // Gợi ý bàn theo số khách
 
-//  Check-in & Check-out
-Route::patch('/orders/{id}/check-in', [OrderController::class, 'checkIn']);     // Check-in
-Route::patch('/orders/{id}/check-out', [OrderController::class, 'checkOut']);   // Check-out
-
-
 // menu
 Route::get('/menu',[MenuController::class,'index']);
