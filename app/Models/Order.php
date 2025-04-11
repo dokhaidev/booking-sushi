@@ -12,9 +12,9 @@ class Order extends Model
     protected $fillable = [
         'table_id',
         'customer_id',
-        'guest_name',
-        'guest_phone',
-        'guest_email',
+        'name',
+        'phone',
+        'email',
         'total_price',
         'status',
         'reservation_date',
