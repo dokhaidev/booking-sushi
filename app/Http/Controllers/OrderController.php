@@ -40,10 +40,9 @@ class OrderController extends Controller
         'reservation_date' => 'required|date',
         'reservation_time' => 'required',
         'guests' => 'required|integer|min:1',
-        'guest_name' => 'required|string|max:255',
-        'guest_phone' => 'required|string|max:20',
-        'guest_email' => 'required|email',
-        'total_price' => 'numeric|min:0',
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'email' => 'required|email',
     ]);
 
     $validated['status'] = 'pending';

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\CustomerController;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -34,3 +36,10 @@ Route::get('/orders/suggest-table', [OrderController::class, 'suggestTable']); /
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
+// customer
+Route::post('/login',[CustomerController::class,"login"]);
+Route::post('/register',[CustomerController::class,"store"]);
+Route::middleware('auth:sanctum') ->group(function (){
+    Route::get('/user', [CustomerController::class, 'index']);
+    Route::get('/logout', [CustomerController::class, 'destroy']);
+});
