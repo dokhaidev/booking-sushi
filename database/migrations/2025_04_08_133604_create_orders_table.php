@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('phone')->nullable(); // Thêm
             $table->string('email')->nullable(); // Thêm
             $table->decimal('total_price', 10, 2)->nullable();
+            $table->text('note')->nullable();
             $table->enum('status', ['pending', 'confirmed', 'checked_in', 'completed', 'cancelled']);
             $table->date('reservation_date');
             $table->time('reservation_time');

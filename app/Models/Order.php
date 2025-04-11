@@ -17,6 +17,7 @@ class Order extends Model
         'email',
         'total_price',
         'status',
+        'note',
         'reservation_date',
         'reservation_time',
         'guests',

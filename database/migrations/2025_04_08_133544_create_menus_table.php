@@ -18,15 +18,11 @@ return new class extends Migration
             $table->string('image', 255)->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->enum('tag', ['hot', 'new']);
             $table->enum('status', ['available', 'unavailable']);
             $table->timestamps();
         });
-
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('menus');
