@@ -43,6 +43,7 @@ class OrderController extends Controller
         'name' => 'required|string|max:255',
         'phone' => 'required|string|max:20',
         'email' => 'required|email',
+        'note' => 'required',
     ]);
 
     $validated['status'] = 'pending';
@@ -81,6 +82,7 @@ class OrderController extends Controller
 
         return response()->json($orders);
     }
+
 
     // 💡 Gợi ý bàn theo số khách
     public function suggestTable(Request $request)
