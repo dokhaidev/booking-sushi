@@ -111,15 +111,4 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    // 💡 Gợi ý bàn theo số khách
-    public function suggestTable(Request $request)
-    {
-        $guests = $request->input('guests', 1);
-
-        $tables = Table::where('status', 'available')
-            ->where('max_guests', '>=', $guests)
-            ->get();
-
-        return response()->json($tables);
-    }
 }
