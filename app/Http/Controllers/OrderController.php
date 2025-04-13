@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class OrderController extends Controller
 {
@@ -48,9 +49,32 @@ class OrderController extends Controller
 
     $validated['status'] = 'pending';
 
-    $order = Order::create($validated);
+    $reservationDateTime = Carbon::parse($validated['reservation_date'] . ' ' . $validated['reservation_time']);
+    $startWindow = $reservationDateTime->copy()->subHours(2);
+    $endWindow = $reservationDateTime->copy()->addHours(2);
 
-    return response()->json(['message' => 'Reservation created', 'data' => $order], 201);
+    // Tìm tất cả bàn có thể chứa nhóm khách
+    $tables = Table::where('max_guests', '>=', $validated['guests'])
+        ->orderBy('max_guests') // ưu tiên bàn nhỏ hơn
+        ->get();
+
+    foreach ($tables as $table) {
+        // Tính tổng số khách đã đặt bàn này trong khoảng thời gian đó
+        $existingGuests = Order::where('table_id', $table->id)
+            ->where('reservation_date', $validated['reservation_date'])
+            ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
+            ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'))
+            ->sum('guests');
+
+        // Nếu bàn vẫn còn chỗ
+        if (($existingGuests + $validated['guests']) <= $table->max_guests) {
+            $validated['table_id'] = $table->id;
+            $order = Order::create($validated);
+
+            return response()->json(['message' => 'Reservation created', 'data' => $order], 201);
+        }
+    }
+    return response()->json(['message' => 'No available table for the selected time and guest count'], 422);
 }
 
     // Cập nhật trạng thái
