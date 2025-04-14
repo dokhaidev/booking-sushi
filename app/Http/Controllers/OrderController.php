@@ -69,7 +69,12 @@ class OrderController extends Controller
         // Nếu bàn vẫn còn chỗ
         if (($existingGuests + $validated['guests']) <= $table->max_guests) {
             $validated['table_id'] = $table->id;
+
+            // Tạo đơn đặt bàn
             $order = Order::create($validated);
+
+            $table->status = 'reserved';
+            $table->save();
 
             return response()->json(['message' => 'Reservation created', 'data' => $order], 201);
         }
@@ -119,4 +124,5 @@ class OrderController extends Controller
 
         return response()->json($tables);
     }
+
 }
