@@ -2,52 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
+use App\Models\Customer;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class GoogleController extends Controller
 {
-    public function index(){
-        return view('login');
-    }
-    public function loginWithGoogle(Request $request)
+    public function redirect()
     {
-        $request->validate([
-            'access_token' => 'required|string',
-        ]);
+        return Socialite::driver('google')->stateless()->redirect();
+    }
 
-        try {
-            $googleUser = Socialite::driver('google')
-                ->stateless()
-                ->userFromToken($request->access_token);
-        
-            \Log::info('Google User', ['user' => $googleUser]); // Thêm dòng log
-        
-            $customer = Customer::where('email', $googleUser->getEmail())->first();
-        
-            if (!$customer) {
-                $customer = Customer::create([
-                    'name' => $googleUser->getName() ?? $googleUser->getEmail(),
-                    'email' => $googleUser->getEmail(),
-                    'password' => bcrypt(Str::random(16)),
-                    'google_id' => $googleUser->id,
-                ]);
-            }
-        
-            $token = $customer->createToken('login')->plainTextToken;
-        
-            return response()->json([
-                'user' => $customer,
-                'token' => $token,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Invalid Google access token',
-                'error' => $e->getMessage(),
-            ], 401);
-        }
-        
+    public function callback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $user = Customer::firstOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'name' => $googleUser->getName(),
+                'google_id' => $googleUser->getId(),
+                'password' => bcrypt(Str::random(16)), // optional, chỉ để pass validate
+            ]
+        );
+
+        // Nếu dùng Sanctum hoặc Passport để cấp token
+        $token = $user->createToken('google-token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ]);
     }
 }

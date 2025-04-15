@@ -6,9 +6,6 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
-
-
-
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -24,15 +21,6 @@ Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
-
-
-
-
-// routes/api.php
-
-
-
-
 
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
@@ -52,6 +40,9 @@ Route::get('/orders/suggest-table', [OrderController::class, 'suggestTable']); /
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
+Route::post('insert-menu',[MenuController::class,'store']);
+Route::put('menu/{id}',[MenuController::class,'update']);
+Route::delete('menu/{id}',[MenuController::class,'destroy']);
 // customer
 Route::post('/login',[CustomerController::class,"login"]);
 Route::post('/register',[CustomerController::class,"store"]);
@@ -60,18 +51,9 @@ Route::middleware('auth:sanctum') ->group(function (){
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 
-
-
-
-
-
-
-
 // login Google
-Route::get('/loginGG', [GoogleController::class, 'index']);
-Route::post('/auth/google', [GoogleController::class, 'loginWithGoogle']);
-
-
+Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::get('auth/google/callback', [GoogleController::class, 'callback']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
