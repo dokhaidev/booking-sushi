@@ -6,13 +6,9 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
-
-
-
 use App\Http\Controllers\GoogleController;
-
-
-
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 
 Route::get('/user', function (Request $request) {
@@ -30,10 +26,6 @@ Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 
 
 // routes/api.php
-
-
-
-
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
 Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
 Route::get('/available-times', [TableController::class, 'availableTimes']); // Lý tìm bàn phù hợp
@@ -59,14 +51,12 @@ Route::middleware('auth:sanctum') ->group(function (){
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 
-
-
-
-
-
-
-
 // login Google
 Route::get('/loginGG', [GoogleController::class, 'index']);
 Route::post('/auth/google', [GoogleController::class, 'loginWithGoogle']);
+
+
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
