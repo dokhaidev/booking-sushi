@@ -7,6 +7,14 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
 
+
+
+use App\Http\Controllers\GoogleController;
+
+
+
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -17,6 +25,12 @@ Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
+
+
+
+
+// routes/api.php
+
 
 
 
@@ -32,6 +46,8 @@ Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // 
 // Lịch theo ngày
 Route::get('/orders/date/{date}', [OrderController::class, 'getByDate']);  // Lấy đơn theo ngày
 
+//  Gợi ý bàn
+Route::get('/orders/suggest-table', [OrderController::class, 'suggestTable']); // Gợi ý bàn theo số khách
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
@@ -42,3 +58,15 @@ Route::middleware('auth:sanctum') ->group(function (){
     Route::get('/user', [CustomerController::class, 'index']);
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
+
+
+
+
+
+
+
+
+// login Google
+Route::get('/loginGG', [GoogleController::class, 'index']);
+Route::post('/auth/google', [GoogleController::class, 'loginWithGoogle']);
+
