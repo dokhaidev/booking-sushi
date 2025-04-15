@@ -6,7 +6,8 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
-
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -42,3 +43,5 @@ Route::middleware('auth:sanctum') ->group(function (){
     Route::get('/user', [CustomerController::class, 'index']);
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
