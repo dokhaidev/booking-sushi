@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('phone', 10)->nullable();
             $table->integer('point')->default(0);
             $table->string('password');
+            $table->string('google_id', 255)->nullable();
             $table->timestamps();
         });
     }
