@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
@@ -9,13 +8,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-
-
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-
 Route::get('/tables', [TableController::class, 'index']);        // List
 Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
@@ -52,8 +47,7 @@ Route::middleware('auth:sanctum') ->group(function (){
 });
 
 // login Google
-Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
-Route::get('auth/google/callback', [GoogleController::class, 'callback']);
+
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);

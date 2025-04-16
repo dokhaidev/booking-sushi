@@ -2,13 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TableController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\GoogleController;
-use App\Http\Controllers\GoogleWebController;
 
+use App\Http\Controllers\GoogleController;
 
 
 Route::get('/', function () {
@@ -16,5 +11,5 @@ Route::get('/', function () {
 });
 
 // login Google
-Route::get('/login', [GoogleWebController::class, 'redirectToGoogle'])->name('login');
-Route::get('/auth/google/callback', [GoogleWebController::class, 'handleGoogleCallback']);
+Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::get('auth/google/callback', [GoogleController::class, 'callback']);

@@ -38,7 +38,7 @@ return [
  'guards' => [
     'web' => [
         'driver' => 'session',
-        'provider' => 'users', // ✅ Đổi lại đúng tên provider đã định nghĩa
+        'provider' => 'users',
     ],
 ],
 
