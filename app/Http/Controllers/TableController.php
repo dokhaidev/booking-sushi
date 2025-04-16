@@ -39,7 +39,7 @@ class TableController extends Controller
     $guests = $request->guests;
 
     $times = [
-        '10:00', '12:15', '14:30', '16:45', '18:50', '21:05' // hoặc tùy theo lịch nhà hàng
+        '10:00', '12:15', '14:30', '16:45', '18:00', '20:15','22:30' // hoặc tùy theo lịch nhà hàng
     ];
 
 

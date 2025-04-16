@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
@@ -35,6 +36,10 @@ Route::get('/orders/date/{date}', [OrderController::class, 'getByDate']);  // Lá
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
+Route::get('/stat-menu',[MenuController::class,"stats"]);
+// cate
+Route::get('/category',[CategoryController::class,"index"]);
+
 // customer
 Route::post('/login',[CustomerController::class,"login"]);
 Route::post('/register',[CustomerController::class,"store"]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Constraint\Count;
 
 class MenuController extends Controller
 {
@@ -100,5 +101,10 @@ class MenuController extends Controller
         $menu->delete();
 
         return response()->json(['message' => 'Menu deleted successfully.']);
+    }
+    // tỏng món ăn
+    public function stats(){
+        $stats = Menu::count();
+        return response() -> json($stats);
     }
 }
