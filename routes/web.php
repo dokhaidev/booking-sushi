@@ -11,5 +11,4 @@ Route::get('/', function () {
 });
 
 // login Google
-Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
-Route::get('auth/google/callback', [GoogleController::class, 'callback']);
+

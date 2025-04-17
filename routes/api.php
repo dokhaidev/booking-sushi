@@ -52,3 +52,5 @@ Route::middleware('auth:sanctum') ->group(function (){
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
+Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::get('auth/google/callback', [GoogleController::class, 'callback']);

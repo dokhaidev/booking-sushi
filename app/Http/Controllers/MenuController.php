@@ -28,7 +28,7 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('menus', 'public');
+            $validated['image'] = $request->file('image')->store('uploads', 'public');
         }
 
         $menu = Menu::create($validated);
