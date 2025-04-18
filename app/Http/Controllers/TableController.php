@@ -50,7 +50,6 @@ class TableController extends Controller
         $startWindow = $reservationDateTime->copy()->subHours(2);
         $endWindow = $reservationDateTime->copy()->addHours(2);
 
-        // Tìm bàn phù hợp
         $tables = Table::where('max_guests', '>=', $guests)
             ->orderBy('max_guests')
             ->get();
@@ -64,7 +63,7 @@ class TableController extends Controller
 
             if (($existingGuests + $guests) <= $table->max_guests) {
                 $availableTimes[] = $time;
-                break; // chỉ cần 1 bàn phù hợp là đủ
+                break;
             }
         }
     }
@@ -74,7 +73,6 @@ class TableController extends Controller
 
     ]);
 }
-    // Lấy chi tiết 1 bàn
     public function show($id)
     {
         $table = Table::find($id);

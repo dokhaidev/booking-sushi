@@ -35,11 +35,9 @@ class ResetPasswordController extends Controller
             return response()->json(['message' => 'Không tìm thấy người dùng.'], 404);
         }
 
-        // Đặt lại mật khẩu
         $user->password = Hash::make($request->password);
         $user->save();
 
-        // Xóa token sau khi dùng
         DB::table('password_reset_tokens')->where('email', $matched->email)->delete();
 
         return response()->json(['message' => 'Đặt lại mật khẩu thành công!'], 200);
