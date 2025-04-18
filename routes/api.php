@@ -45,7 +45,7 @@ Route::get('/stat-menu',[MenuController::class,"stats"]);
 // cate
 Route::get('/category',[CategoryController::class,"index"]);
 //
-Route::post('insert-menu',[MenuController::class,'store']);
+Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::put('menu/{id}',[MenuController::class,'update']);
 Route::delete('menu/{id}',[MenuController::class,'destroy']);
 // customer
@@ -62,4 +62,7 @@ Route::get('auth/google/callback', [GoogleController::class, 'callback']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+// đơn hàng
+Route::get('/orderRecent', [OrderController::class, 'getOrder']);
+Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
 

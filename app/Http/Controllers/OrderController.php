@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Table;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use League\CommonMark\Node\Query\OrExpr;
 
 class OrderController extends Controller
 {
@@ -125,5 +127,21 @@ class OrderController extends Controller
 
         return response()->json($tables);
     }
+    // lấy ra đơn hàng
+    public function getOrder(){
+        $order = Order::with("items")
+        ->select("id","name","status","reservation_date","reservation_time","total_price") -> get();
+        return response() -> json($order);
+    }
+    public function statsDashbroad (){
+        $totalOrder = Order::where('status', 'confirmed')->count();
+        $totalRevenue = Order::where('status', 'confirmed')->sum('total_price');
+        $totalCustomers = Customer::count();
+        return response()->json([
+           "statOrder"=> $totalOrder ,
+           "statTotal"=> $totalRevenue,
+            "statCustomer"=>$totalCustomers
+        ]);
 
+    }
 }
