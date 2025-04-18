@@ -23,6 +23,7 @@ class MenuController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'tag' => 'required|in:hot,new',
             'status' => 'required|in:available,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -65,6 +66,7 @@ class MenuController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
+            'tag' => 'sometimes|in:hot,new',
             'status' => 'sometimes|in:available,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -73,7 +75,7 @@ class MenuController extends Controller
             if ($menu->image) {
                 Storage::disk('public')->delete($menu->image);
             }
-            $validated['image'] = $request->file('image')->store('menus', 'public');
+            $validated['image'] = $request->file('image')->store('uploads', 'public');
         }
 
         $menu->update($validated);

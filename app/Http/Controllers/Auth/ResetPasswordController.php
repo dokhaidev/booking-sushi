@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Customer;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +13,7 @@ class ResetPasswordController extends Controller
     {
         $request->validate([
             'token'    => 'required',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:6',
         ]);
 
         // Tìm token khớp trong bảng password_reset_tokens

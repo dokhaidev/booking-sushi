@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -27,17 +28,21 @@ Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy 
 Route::patch('/updateStatus-order/{id}/status', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
 Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
 
-// Lịch theo ngày
-Route::get('/orders/date/{date}', [OrderController::class, 'getByDate']);  // Lấy đơn theo ngày
 
-//  Gợi ý bàn
-Route::get('/orders/suggest-table', [OrderController::class, 'suggestTable']); // Gợi ý bàn theo số khách
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
 Route::post('insert-menu',[MenuController::class,'store']);
-Route::put('menu/{id}',[MenuController::class,'update']);
-Route::delete('menu/{id}',[MenuController::class,'destroy']);
+Route::put('menu-update/{id}',[MenuController::class,'update']);
+Route::delete('menu-delete/{id}',[MenuController::class,'destroy']);
+
+// category
+Route::get('/category',[CategoryController::class,'index']);
+Route::post('insert-category',[CategoryController::class,'store']);
+Route::put('category-update/{id}',[CategoryController::class,'update']);
+Route::delete('category-delete/{id}',[CategoryController::class,'destroy']);
+
+
 // customer
 Route::post('/login',[CustomerController::class,"login"]);
 Route::post('/register',[CustomerController::class,"store"]);
