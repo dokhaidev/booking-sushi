@@ -1,4 +1,9 @@
 <?php
+<<<<<<< HEAD
+=======
+
+use App\Http\Controllers\CategoryController;
+>>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
@@ -32,6 +37,7 @@ Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // 
 
 // menu
 Route::get('/menu',[MenuController::class,'index']);
+<<<<<<< HEAD
 Route::post('insert-menu',[MenuController::class,'store']);
 Route::put('menu-update/{id}',[MenuController::class,'update']);
 Route::delete('menu-delete/{id}',[MenuController::class,'destroy']);
@@ -43,6 +49,15 @@ Route::put('category-update/{id}',[CategoryController::class,'update']);
 Route::delete('category-delete/{id}',[CategoryController::class,'destroy']);
 
 
+=======
+Route::get('/stat-menu',[MenuController::class,"stats"]);
+// cate
+Route::get('/category',[CategoryController::class,"index"]);
+//
+Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::put('menu/{id}',[MenuController::class,'update']);
+Route::delete('menu/{id}',[MenuController::class,'destroy']);
+>>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
 // customer
 Route::post('/login',[CustomerController::class,"login"]);
 Route::post('/register',[CustomerController::class,"store"]);
@@ -56,6 +71,9 @@ Route::middleware('auth:sanctum') ->group(function (){
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+// đơn hàng
+Route::get('/orderRecent', [OrderController::class, 'getOrder']);
+Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
 
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::get('auth/google/callback', [GoogleController::class, 'callback']);

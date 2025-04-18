@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Constraint\Count;
 
 class MenuController extends Controller
 {
@@ -26,6 +27,7 @@ class MenuController extends Controller
             'tag' => 'required|in:hot,new',
             'status' => 'required|in:available,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            "tag" => "required"
         ]);
 
         if ($request->hasFile('image')) {
@@ -102,5 +104,10 @@ class MenuController extends Controller
         $menu->delete();
 
         return response()->json(['message' => 'Menu deleted successfully.']);
+    }
+    // tỏng món ăn
+    public function stats(){
+        $stats = Menu::count();
+        return response() -> json($stats);
     }
 }

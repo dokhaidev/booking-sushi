@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Table;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use League\CommonMark\Node\Query\OrExpr;
 
 class OrderController extends Controller
 {
@@ -44,6 +46,8 @@ class OrderController extends Controller
         'name' => 'required|string|max:255',
         'phone' => 'required|string|max:20',
         'email' => 'required|email',
+        'note' => 'required',
+        'customer_id'=>  'nullable'
     ]);
 
     $validated['status'] = 'pending';
@@ -111,4 +115,33 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+
+    // 💡 Gợi ý bàn theo số khách
+    public function suggestTable(Request $request)
+    {
+        $guests = $request->input('guests', 1);
+
+        $tables = Table::where('status', 'available')
+            ->where('max_guests', '>=', $guests)
+            ->get();
+
+        return response()->json($tables);
+    }
+    // lấy ra đơn hàng
+    public function getOrder(){
+        $order = Order::with("items")
+        ->select("id","name","status","reservation_date","reservation_time","total_price") -> get();
+        return response() -> json($order);
+    }
+    public function statsDashbroad (){
+        $totalOrder = Order::where('status', 'confirmed')->count();
+        $totalRevenue = Order::where('status', 'confirmed')->sum('total_price');
+        $totalCustomers = Customer::count();
+        return response()->json([
+           "statOrder"=> $totalOrder ,
+           "statTotal"=> $totalRevenue,
+            "statCustomer"=>$totalCustomers
+        ]);
+
+    }
 }

@@ -12,10 +12,9 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customers::all();
-        return response()->json($customers);
+        return response()->json($request->user());
     }
 
 

@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 
 
 namespace Database\Seeders;
@@ -52,5 +53,21 @@ class OrderSeeder extends Seeder
                 'guests' => rand(1, 8),
             ]);
         }
+=======
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use App\Models\Order;
+
+class OrderSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        Order::factory()->count(10)->create();
+>>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
     }
 }
