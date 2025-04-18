@@ -1,12 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\Customer;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class GoogleController extends Controller
 {
@@ -24,16 +21,14 @@ class GoogleController extends Controller
             [
                 'name' => $googleUser->getName(),
                 'google_id' => $googleUser->getId(),
-                'password' => bcrypt(Str::random(16)), // optional, chỉ để pass validate
+                'password' => bcrypt(Str::random(16)), // bắt buộc nếu bạn có validate password
             ]
         );
 
-        // Nếu dùng Sanctum hoặc Passport để cấp token
         $token = $user->createToken('google-token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        // ✅ frontend sẽ nhận được token và thông tin user
+        return redirect("http://localhost:5173/google/callback?token=$token");
     }
 }
+    

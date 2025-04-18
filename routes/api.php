@@ -44,7 +44,10 @@ Route::get('/menu',[MenuController::class,'index']);
 Route::get('/stat-menu',[MenuController::class,"stats"]);
 // cate
 Route::get('/category',[CategoryController::class,"index"]);
-
+//
+Route::post('insert-menu',[MenuController::class,'store']);
+Route::put('menu/{id}',[MenuController::class,'update']);
+Route::delete('menu/{id}',[MenuController::class,'destroy']);
 // customer
 Route::post('/login',[CustomerController::class,"login"]);
 Route::post('/register',[CustomerController::class,"store"]);

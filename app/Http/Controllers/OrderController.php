@@ -45,6 +45,7 @@ class OrderController extends Controller
         'phone' => 'required|string|max:20',
         'email' => 'required|email',
         'note' => 'required',
+        'customer_id'=>  'nullable'
     ]);
 
     $validated['status'] = 'pending';

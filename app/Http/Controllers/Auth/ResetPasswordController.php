@@ -14,7 +14,7 @@ class ResetPasswordController extends Controller
     {
         $request->validate([
             'token'    => 'required',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:6',
         ]);
 
         // Tìm token khớp trong bảng password_reset_tokens
