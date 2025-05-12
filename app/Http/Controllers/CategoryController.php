@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\Category;
 
 class CategoryController extends Controller
 {
-<<<<<<< HEAD
     public function index()
     {
         return response()->json(Category::all());
@@ -77,9 +75,4 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Category deleted successfully.']);
     }
-=======
-    public function index(){
-        return response()->json(Category::all());
-    }
->>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
 }

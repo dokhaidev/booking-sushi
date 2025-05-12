@@ -1,19 +1,16 @@
 <?php
-<<<<<<< HEAD
-=======
 
 use App\Http\Controllers\CategoryController;
->>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -36,32 +33,29 @@ Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // 
 
 
 // menu
-Route::get('/menu',[MenuController::class,'index']);
-<<<<<<< HEAD
-Route::post('insert-menu',[MenuController::class,'store']);
-Route::put('menu-update/{id}',[MenuController::class,'update']);
-Route::delete('menu-delete/{id}',[MenuController::class,'destroy']);
+Route::get('/menu', [MenuController::class, 'index']);
+Route::post('insert-menu', [MenuController::class, 'store']);
+Route::put('menu-update/{id}', [MenuController::class, 'update']);
+Route::delete('menu-delete/{id}', [MenuController::class, 'destroy']);
 
 // category
-Route::get('/category',[CategoryController::class,'index']);
-Route::post('insert-category',[CategoryController::class,'store']);
-Route::put('category-update/{id}',[CategoryController::class,'update']);
-Route::delete('category-delete/{id}',[CategoryController::class,'destroy']);
+Route::get('/category', [CategoryController::class, 'index']);
+Route::post('insert-category', [CategoryController::class, 'store']);
+Route::put('category-update/{id}', [CategoryController::class, 'update']);
+Route::delete('category-delete/{id}', [CategoryController::class, 'destroy']);
 
 
-=======
-Route::get('/stat-menu',[MenuController::class,"stats"]);
+Route::get('/stat-menu', [MenuController::class, "stats"]);
 // cate
-Route::get('/category',[CategoryController::class,"index"]);
+Route::get('/category', [CategoryController::class, "index"]);
 //
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
-Route::put('menu/{id}',[MenuController::class,'update']);
-Route::delete('menu/{id}',[MenuController::class,'destroy']);
->>>>>>> 2eac8cda036f8d463e5c05f0b033b2fe0d01ed95
+Route::put('menu/{id}', [MenuController::class, 'update']);
+Route::delete('menu/{id}', [MenuController::class, 'destroy']);
 // customer
-Route::post('/login',[CustomerController::class,"login"]);
-Route::post('/register',[CustomerController::class,"store"]);
-Route::middleware('auth:sanctum') ->group(function (){
+Route::post('/login', [CustomerController::class, "login"]);
+Route::post('/register', [CustomerController::class, "store"]);
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [CustomerController::class, 'index']);
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
