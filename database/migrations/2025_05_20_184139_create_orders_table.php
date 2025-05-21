@@ -22,9 +22,9 @@ return new class extends Migration
             $table->time('reservation_time')->nullable();
             $table->integer('guests')->nullable();
             // Thêm các cột để lưu thông tin khách hàng nhập từ form
-            $table->string('guest_name')->nullable();
-            $table->string('guest_email')->nullable();
-            $table->string('guest_phone', 20)->nullable();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->timestamps();
         });
     }
