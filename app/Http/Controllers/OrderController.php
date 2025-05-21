@@ -45,7 +45,7 @@ class OrderController extends Controller
         'guests' => 'required|integer|min:1',
         'name' => 'required|string|max:255',
         'phone' => 'required|string|max:20',
-        'email' => 'required|email',
+                'email' => 'required|email',
         'note' => 'required',
         'customer_id'=>  'nullable'
     ]);
