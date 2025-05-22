@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->string('name');
+            $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
-
     public function down()
     {
         Schema::dropIfExists('foods');

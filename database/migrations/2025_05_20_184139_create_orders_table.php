@@ -21,17 +21,12 @@ return new class extends Migration
             $table->date('reservation_date')->nullable();
             $table->time('reservation_time')->nullable();
             $table->integer('guests')->nullable();
-            // Thêm các cột để lưu thông tin khách hàng nhập từ form
-            $table->string('name')->nullable();
+            $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();            $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone', 20)->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down()
     {
         Schema::dropIfExists('orders');

@@ -25,7 +25,6 @@ class OrderController extends Controller
                 $q->where('table_number', 'like', "%$keyword%");
             })->orWhere('status', 'like', "%$keyword%");
         }
-
         return response()->json($query->get());
     }
 
