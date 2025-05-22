@@ -23,7 +23,6 @@ Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
 Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
-Route::get('/available-times', [TableController::class, 'availableTimes']); // Lý tìm bàn phù hợp
 
 // Chi tiết, cập nhật, xoá
 Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn

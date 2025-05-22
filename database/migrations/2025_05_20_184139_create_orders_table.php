@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
-            $table->foreignId('employee_id')->nullable()->constrained('employees')->nullOnDelete();
             $table->foreignId('payment_method_id')->nullable()->constrained('payment_methods')->nullOnDelete();
             $table->decimal('total_price', 10, 2);
             $table->date('reservation_date')->nullable();
             $table->time('reservation_time')->nullable();
             $table->integer('guests')->nullable();
-            $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();            $table->string('name')->nullable();
+            $table->string('note')->nullable();
+            $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();
+            $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone', 20)->nullable();
             $table->timestamps();
