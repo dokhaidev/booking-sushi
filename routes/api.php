@@ -78,3 +78,8 @@ Route::post('/voucher', [\App\Http\Controllers\VoucherController::class, 'store'
 Route::get('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'show']); // lấy chi tiết
 Route::put('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'update']); // cập nhật
 Route::delete('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'destroy']); // xoá
+
+
+
+
+// test chưa test point vs level, voucher
