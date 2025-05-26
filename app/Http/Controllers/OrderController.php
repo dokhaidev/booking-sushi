@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Table;
 use App\Models\Customer;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -45,7 +46,7 @@ class OrderController extends Controller
             'phone' => 'required|string|max:20',
             'email' => 'required|email',
             'note' => 'nullable|string',
-            'customer_id'=>  'nullable|exists:customers,id',
+            'customer_id' =>  'nullable|exists:customers,id',
             'payment_method_id' => 'nullable|exists:payment_methods,id',
             'voucher_id' => 'nullable|exists:vouchers,id',
             'total_price' => 'required|numeric|min:0'
@@ -120,20 +121,62 @@ class OrderController extends Controller
     // 💡 Gợi ý bàn theo số khách
 
     // lấy ra đơn hàng
-    public function getOrder(){
+    public function getOrder()
+    {
         $order = Order::with("items")
-        ->select("id","name","status","reservation_date","reservation_time","total_price") -> get();
-        return response() -> json($order);
+            ->select("id", "name", "status", "reservation_date", "reservation_time", "total_price")->get();
+        return response()->json($order);
     }
-    public function statsDashbroad (){
+    public function statsDashbroad()
+    {
         $totalOrder = Order::where('status', 'confirmed')->count();
         $totalRevenue = Order::where('status', 'confirmed')->sum('total_price');
         $totalCustomers = Customer::count();
         return response()->json([
-           "statOrder"=> $totalOrder ,
-           "statTotal"=> $totalRevenue,
-            "statCustomer"=>$totalCustomers
+            "statOrder" => $totalOrder,
+            "statTotal" => $totalRevenue,
+            "statCustomer" => $totalCustomers
         ]);
+    }
+    public function applyVoucher(Request  $request)
+    {
+        $total = $request->total;
+        $voucherCode = $request->code;
+        $voucher = Voucher::where('code', $voucherCode)
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+        if (!$voucher) {
+            return response()->json(['message' => 'voucher không tồn tại'], 404);
+        }
+        if ($voucher->usage_limit <= 0) {
+            return response()->json(['message' => 'Voucher đã hết lượt sử dụng'], 400);
+        }
 
+        $voucher->usage_limit -= 1;
+        $voucher->save();
+        $discount = $voucher->discount_value;
+        $newTotal = max(0, $total - $discount);
+
+        return response()->json([
+            'message' => 'Voucher áp dụng thành công',
+            'new_total' => $newTotal,
+        ]);
+    }
+
+    public function point(Request $request)
+    {
+        $pointsEarned = floor($request->total / 1000); // 1 điểm cho mỗi 1000 đồng
+        $customer = Customer::find($request->customer_id);
+        if (!$customer) {
+            return response()->json(['message' => 'Khách hàng không tồn tại'], 404);
+        }
+        $customer->points += $pointsEarned;
+        $customer->save();
+        return response()->json([
+            'message' => 'Điểm thưởng đã được cộng',
+            'points' => $customer->points,
+        ]);
     }
 }
