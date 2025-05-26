@@ -7,6 +7,8 @@ use App\Models\Table;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\orderTable;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -35,56 +37,7 @@ class OrderController extends Controller
     }
 
     //  Tạo đơn mới
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required',
-            'guests' => 'required|integer|min:1',
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'email' => 'required|email',
-            'note' => 'nullable|string',
-            'customer_id'=>  'nullable|exists:customers,id',
-            'payment_method_id' => 'nullable|exists:payment_methods,id',
-            'voucher_id' => 'nullable|exists:vouchers,id',
-            'total_price' => 'required|numeric|min:0'
-        ]);
 
-        $validated['status'] = 'pending';
-
-        $reservationDateTime = Carbon::parse($validated['reservation_date'] . ' ' . $validated['reservation_time']);
-        $startWindow = $reservationDateTime->copy()->subHours(2);
-        $endWindow = $reservationDateTime->copy()->addHours(2);
-
-        // Tìm tất cả bàn có thể chứa nhóm khách
-        $tables = Table::where('max_guests', '>=', $validated['guests'])
-            ->orderBy('max_guests') // ưu tiên bàn nhỏ hơn
-            ->get();
-
-        foreach ($tables as $table) {
-            // Tính tổng số khách đã đặt bàn này trong khoảng thời gian đó
-            $existingGuests = Order::where('table_id', $table->id)
-                ->where('reservation_date', $validated['reservation_date'])
-                ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
-                ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'))
-                ->sum('guests');
-
-            // Nếu bàn vẫn còn chỗ
-            if (($existingGuests + $validated['guests']) <= $table->max_guests) {
-                $validated['table_id'] = $table->id;
-
-                // Tạo đơn đặt bàn
-                $order = Order::create($validated);
-
-                $table->status = false; // Đánh dấu bàn đã được đặt (occupied)
-                $table->save();
-
-                return response()->json(['message' => 'Reservation created', 'data' => $order], 201);
-            }
-        }
-        return response()->json(['message' => 'No available table for the selected time and guest count'], 422);
-    }
 
     // Cập nhật trạng thái
     public function updateStatus(Request $request, $id)
@@ -135,5 +88,56 @@ class OrderController extends Controller
             "statCustomer"=>$totalCustomers
         ]);
 
+    }
+
+    // Lấy danh sách bàn còn trống theo ngày và giờ
+
+    // Đặt nhiều bàn cho 1 khách hàng, tạo 1 hóa đơn (order) cho các bàn đó
+    public function bookTables(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'table_ids' => 'required|array',
+            'table_ids.*' => 'exists:tables,id',
+            'reservation_date' => 'required|date',
+            'reservation_time' => 'required|date_format:H:i:s',
+            'payment_method_id' => 'nullable|exists:payment_methods,id',
+            'voucher_id' => 'nullable|exists:vouchers,id',
+            'note' => 'nullable|string',
+            'total_price' => 'required|numeric'
+        ]);
+
+        // 1. Tạo hóa đơn (order) trước
+        $order = Order::create([
+            'customer_id' => $request->customer_id,
+            'payment_method_id' => $request->payment_method_id,
+            'voucher_id' => $request->voucher_id,
+            'total_price' => $request->total_price,
+            'note' => $request->note,
+        ]);
+
+        $tableIds = $request->table_ids;
+        $date = $request->reservation_date;
+        $time = $request->reservation_time;
+
+        // 2. Thêm các bàn vào order_tables, luôn truyền order_id
+        $orderTableIds = [];
+        foreach ($tableIds as $tableId) {
+            $orderTableIds[] = DB::table('order_tables')->insertGetId([
+                'order_id' => $order->id,
+                'table_id' => $tableId,
+                'reservation_date' => $date,
+                'reservation_time' => $time,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Đặt bàn thành công',
+            'order_id' => $order->id,
+            'order_table_ids' => $orderTableIds,
+            'booked_tables' => $tableIds,
+        ]);
     }
 }

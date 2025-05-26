@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('point')->default(0);
             $table->string('password');
             $table->string('membership_level')->default('standard');
+            $table->enum('status', ['user', 'admin', 'orderManager','menuManager'])->default('user');
             $table->timestamps();
         });
     }

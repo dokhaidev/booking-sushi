@@ -10,24 +10,20 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'table_id',
         'customer_id',
-        'name',
         'payment_method_id',
         'voucher_id',
-        'phone',
-        'email',
         'total_price',
         'note',
-        'reservation_date',
-        'reservation_time',
-        'guests',
     ];
 
 
-    public function table()
+    // Một order có thể có nhiều bàn (qua bảng trung gian order_tables)
+    public function tables()
     {
-        return $this->belongsTo(Table::class);
+        return $this->belongsToMany(Table::class, 'order_tables', 'order_id', 'table_id')
+            ->withPivot(['reservation_date', 'reservation_time'])
+            ->withTimestamps();
     }
 
     public function customer()

@@ -15,4 +15,14 @@ class Table extends Model
         'max_guests',
         'status',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(\App\Models\Order::class);
+    }
+
+    public function orderTables()
+    {
+        return $this->hasMany(\App\Models\orderTable::class, 'table_id', 'id');
+    }
 }

@@ -11,19 +11,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('order_tables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
-            $table->foreignId('food_id')->nullable()->constrained('foods')->nullOnDelete();
-            $table->integer('quantity');
-            $table->decimal('price', 10, 2);
-            $table->string('status')->default('pending');
+            $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
+            $table->date('reservation_date');
+            $table->time('reservation_time');
             $table->timestamps();
         });
     }
-
     public function down()
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('order_tables');
     }
 };

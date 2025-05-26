@@ -26,8 +26,7 @@ class GoogleController extends Controller
 
         $token = $user->createToken('google-token')->plainTextToken;
 
-        // ✅ frontend sẽ nhận được token và thông tin user
         return redirect("http://localhost:5173/google/callback?token=$token");
     }
 }
-    
+

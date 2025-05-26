@@ -19,6 +19,7 @@ Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
+Route::post('/tables/available-times', [TableController::class, 'availableTimes']); // Delete
 
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
@@ -60,10 +61,14 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // login Google
+Route::post('/orders/book-tables', [OrderController::class, 'bookTables']);
 
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+
+
+
 // đơn hàng
 Route::get('/orderRecent', [OrderController::class, 'getOrder']);
 Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
