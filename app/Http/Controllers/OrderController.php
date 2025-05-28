@@ -73,21 +73,22 @@ class OrderController extends Controller
     // 💡 Gợi ý bàn theo số khách
 
     // lấy ra đơn hàng
-    public function getOrder(){
+    public function getOrder()
+    {
         $order = Order::with("items")
-        ->select("id","name","status","reservation_date","reservation_time","total_price") -> get();
-        return response() -> json($order);
+            ->select("id", "name", "status", "reservation_date", "reservation_time", "total_price")->get();
+        return response()->json($order);
     }
-    public function statsDashbroad (){
+    public function statsDashbroad()
+    {
         $totalOrder = Order::where('status', 'confirmed')->count();
         $totalRevenue = Order::where('status', 'confirmed')->sum('total_price');
         $totalCustomers = Customer::count();
         return response()->json([
-           "statOrder"=> $totalOrder ,
-           "statTotal"=> $totalRevenue,
-            "statCustomer"=>$totalCustomers
+            "statOrder" => $totalOrder,
+            "statTotal" => $totalRevenue,
+            "statCustomer" => $totalCustomers
         ]);
-
     }
 
     // Lấy danh sách bàn còn trống theo ngày và giờ
