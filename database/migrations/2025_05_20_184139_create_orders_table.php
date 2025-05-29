@@ -18,6 +18,8 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->string('note')->nullable();
             $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();
+            $table->string('status')->default('pending');
+
             $table->timestamps();
         });
     }

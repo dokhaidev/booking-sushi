@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Table;
 use App\Models\Customer;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\orderTable;
@@ -46,7 +47,7 @@ class OrderController extends Controller
         $order->status = $request->status ?? 'pending';
         $order->save();
 
-        return response()->json(['message' => 'Order status updated', 'order' => $order]);
+        return response()->json(['message' => 'update thành công', 'order' => $order]);
     }
 
     //  Xoá đơn
@@ -139,6 +140,32 @@ class OrderController extends Controller
             'order_id' => $order->id,
             'order_table_ids' => $orderTableIds,
             'booked_tables' => $tableIds,
+        ]);
+    }
+    public function applyVoucher(Request  $request)
+    {
+        $total = $request->total;
+        $voucherCode = $request->code;
+        $voucher = Voucher::where('code', $voucherCode)
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+        if (!$voucher) {
+            return response()->json(['message' => 'voucher không tồn tại'], 404);
+        }
+        if ($voucher->usage_limit <= 0) {
+            return response()->json(['message' => 'Voucher đã hết lượt sử dụng'], 400);
+        }
+
+        $voucher->usage_limit -= 1;
+        $voucher->save();
+        $discount = $voucher->discount_value;
+        $newTotal = max(0, $total - $discount);
+
+        return response()->json([
+            'message' => 'Voucher áp dụng thành công',
+            'new_total' => $newTotal,
         ]);
     }
 }

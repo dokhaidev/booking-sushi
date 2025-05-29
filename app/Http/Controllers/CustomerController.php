@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer as Customers ;
+use App\Models\Customer as Customers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -43,7 +43,7 @@ class CustomerController extends Controller
         ], 201);
     }
 
-  
+
     public function login(Request $request)
     {
         $request->validate([
@@ -74,7 +74,7 @@ class CustomerController extends Controller
         return response()->json($customer);
     }
 
-  
+
     public function update(Request $request, string $id)
     {
         $customer = Customers::find($id);
@@ -108,5 +108,27 @@ class CustomerController extends Controller
         $request->user()->tokens()->delete();
 
         return response()->json(['message' => 'Đăng xuất thành công']);
+    }
+    public function levelMember(Request $request)
+    {
+        $customer = $request->user();
+        if (!$customer) {
+            return response()->json(['message' => 'Người dùng không tồn tại'], 404);
+        }
+        $points = $customer->points ?? 0;
+
+        if ($points >= 50000) {
+            $level = 'Kim Cương';
+        } elseif ($points >= 1000) {
+            $level = 'Vàng';
+        } elseif ($points >= 100) {
+            $level = 'Bạc';
+        } else {
+            $level = 'Thường';
+        }
+        $customer->membership_level = $level;
+        $customer->save();
+
+        return response()->json(['level' => $level]);
     }
 }

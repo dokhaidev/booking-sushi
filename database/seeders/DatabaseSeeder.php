@@ -12,9 +12,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            CustomerSeeder::class,
-            TableSeeder::class,
-            // Thêm các seeder khác nếu cần
+            // CustomerSeeder::class,
+            // PaymentMethodSeeder::class,
+            VoucherSeeder::class
+            // CategorySeeder::class,
+            // FoodSeeder::class,
+            // ComboSeeder::class,
+            // ComboItemSeeder::class,
+            // OrderSeeder::class,
+            // OrderItemSeeder::class,
+            // OrderComboItemSeeder::class,
+            // TableSeeder::class,
+            // OrderTableSeeder::class,
+            // FeedbackSeeder::class,
         ]);
     }
 }

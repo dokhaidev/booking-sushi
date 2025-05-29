@@ -2,38 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class PaymentMethodSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
         DB::table('payment_methods')->insert([
-            [
-                'payment_method_name' => 'Tiền mặt',
-                'payment_status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'payment_method_name' => 'Chuyển khoản ngân hàng',
-                'payment_status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'payment_method_name' => 'Ví điện tử Momo',
-                'payment_status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'payment_method_name' => 'Thẻ tín dụng',
-                'payment_status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ['payment_method_name' => 'Cash'],
+            ['payment_method_name' => 'Credit Card'],
+            ['payment_method_name' => 'Momo'],
         ]);
     }
 }

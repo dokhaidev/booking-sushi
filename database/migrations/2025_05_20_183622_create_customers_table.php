@@ -9,17 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-      public function up()
+    public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
+            $table->string('name', 100);
+            $table->string('email', 100)->unique();
+            $table->string('phone', 20);
             $table->integer('point')->default(0);
-            $table->string('password');
-            $table->string('membership_level')->default('standard');
-            $table->enum('status', ['user', 'admin', 'orderManager','menuManager'])->default('user');
+            $table->string('password', 255);
+            $table->string('membership_level', 50)->nullable();
             $table->timestamps();
         });
     }

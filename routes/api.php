@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -75,3 +76,11 @@ Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
 
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::get('auth/google/callback', [GoogleController::class, 'callback']);
+// voucher
+Route::get('/voucher', [\App\Http\Controllers\VoucherController::class, 'index']); // lấy all
+Route::post('/voucher', [\App\Http\Controllers\VoucherController::class, 'store']); // tạo mới
+Route::get('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'show']); // lấy chi tiết
+Route::put('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'update']); // cập nhật
+Route::delete('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'destroy']); // xoá
+
+Route::post('/applyVoucher', [\App\Http\Controllers\OrderController::class, 'applyVoucher']);
