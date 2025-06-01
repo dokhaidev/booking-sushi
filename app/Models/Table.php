@@ -16,13 +16,14 @@ class Table extends Model
         'status',
     ];
 
+    // Sửa lại relationship đúng tên
     public function orders()
     {
-        return $this->hasMany(\App\Models\Order::class);
+        return $this->belongsToMany(Order::class, 'order_tables');
     }
 
     public function orderTables()
     {
-        return $this->hasMany(\App\Models\orderTable::class, 'table_id', 'id');
+        return $this->hasMany(OrderTable::class);
     }
 }

@@ -11,9 +11,11 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id',
-        'payment_method_id',
+        'payment_method',
         'voucher_id',
         'total_price',
+        'status',
+        'payment_code',
         'note',
     ];
 
@@ -32,6 +34,6 @@ class Order extends Model
     }
     public function items()
     {
-        return $this->hasMany(Order_items::class);
+        return $this->hasMany(OrderItem::class);
     }
 }

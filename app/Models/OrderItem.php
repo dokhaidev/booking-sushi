@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
-{
+{protected $table = 'order_items';
     protected $fillable = [
         'order_id',
         'food_id',
-        'combo_id',
         'status',
         'quantity',
         'price',
+        'combo_id',
     ];
 
     public function order(): BelongsTo
@@ -21,9 +21,13 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    // Mỗi OrderItem thuộc về một Menu (món ăn)
-    public function menu(): BelongsTo
+    // Mỗi OrderItem thuộc về một Food (món ăn)
+    public function food(): BelongsTo
     {
-        return $this->belongsTo(Menu::class);
+        return $this->belongsTo(Food::class, 'food_id');
+    }
+    public function comboItem(): BelongsTo
+    {
+        return $this->belongsTo(Combo::class, 'combo_item_id');
     }
 }

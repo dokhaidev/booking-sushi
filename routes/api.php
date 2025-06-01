@@ -1,11 +1,10 @@
 <?php
-
 use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\MenuController;
+use App\Http\Controllers\FoodController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -15,28 +14,30 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::get('/tables', [TableController::class, 'index']);        // List
-Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
+// Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
-Route::post('/tables/available-times', [TableController::class, 'availableTimes']); // Delete
-
+Route::get('/tables/available-times', [TableController::class, 'availableTimes']); // Kiểm tra giờ trống
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
 Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
 
-// Chi tiết, cập nhật, xoá
-Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
+
+
+// Order
+Route::get('/orders/{id}', [OrderController::class, 'show']);
 Route::patch('/updateStatus-order/{id}/status', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
 Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
+Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);// Đặt bàn mới và có thể đặt mnh đơn
 
 
 
 // menu
-Route::get('/menu', [MenuController::class, 'index']);
-Route::post('insert-menu', [MenuController::class, 'store']);
-Route::put('menu-update/{id}', [MenuController::class, 'update']);
-Route::delete('menu-delete/{id}', [MenuController::class, 'destroy']);
+Route::get('/menu', [FoodController::class, 'index']);
+Route::post('insert-menu', [FoodController::class, 'store']);
+Route::put('menu-update/{id}', [FoodController::class, 'update']);
+Route::delete('menu-delete/{id}', [FoodController::class, 'destroy']);
 
 // category
 Route::get('/category', [CategoryController::class, 'index']);
@@ -45,13 +46,12 @@ Route::put('category-update/{id}', [CategoryController::class, 'update']);
 Route::delete('category-delete/{id}', [CategoryController::class, 'destroy']);
 
 
-Route::get('/stat-menu', [MenuController::class, "stats"]);
+Route::get('/stat-menu', [FoodController::class, "stats"]);
 // cate
 Route::get('/category', [CategoryController::class, "index"]);
 //
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
-Route::put('menu/{id}', [MenuController::class, 'update']);
-Route::delete('menu/{id}', [MenuController::class, 'destroy']);
+Route::put('menu/{id}', [FoodController::class, 'update']);
 // customer
 Route::post('/login', [CustomerController::class, "login"]);
 Route::post('/register', [CustomerController::class, "store"]);
@@ -61,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // login Google
-Route::post('/orders/book-tables', [OrderController::class, 'bookTables']);
 
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
@@ -75,3 +74,4 @@ Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
 
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::get('auth/google/callback', [GoogleController::class, 'callback']);
+?>

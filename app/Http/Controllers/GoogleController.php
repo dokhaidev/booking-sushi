@@ -26,7 +26,7 @@ class GoogleController extends Controller
 
         $token = $user->createToken('google-token')->plainTextToken;
 
-        return redirect("http://localhost:5173/google/callback?token=$token");
+        return redirect("http://localhost:30003/google/callback?token=$token");
     }
 }
 

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
+use App\Models\Food;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\Count;
 
-class MenuController extends Controller
+class FoodController extends Controller
 {
-    // Lấy danh sách menu
+    // Lấy danh sách Food
     public function index()
     {
-        $menus = Menu::all();
-        return response()->json($menus);
+        $Foods = Food::all();
+        return response()->json($Foods);
     }
 
     // Tạo món mới
@@ -34,33 +34,33 @@ class MenuController extends Controller
             $validated['image'] = $request->file('image')->store('uploads', 'public');
         }
 
-        $menu = Menu::create($validated);
+        $Food = Food::create($validated);
 
         return response()->json([
-            'message' => 'Menu created successfully.',
-            'data' => $menu
+            'message' => 'Food created successfully.',
+            'data' => $Food
         ], 201);
     }
 
     // Lấy chi tiết món
     public function show($id)
     {
-        $menu = Menu::with('category')->find($id);
+        $Food = Food::with('category')->find($id);
 
-        if (!$menu) {
-            return response()->json(['message' => 'Menu not found.'], 404);
+        if (!$Food) {
+            return response()->json(['message' => 'Food not found.'], 404);
         }
 
-        return response()->json($menu);
+        return response()->json($Food);
     }
 
     // Cập nhật món
     public function update(Request $request, $id)
     {
-        $menu = Menu::find($id);
+        $Food = Food::find($id);
 
-        if (!$menu) {
-            return response()->json(['message' => 'Menu not found.'], 404);
+        if (!$Food) {
+            return response()->json(['message' => 'Food not found.'], 404);
         }
 
         $validated = $request->validate([
@@ -74,40 +74,40 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($menu->image) {
-                Storage::disk('public')->delete($menu->image);
+            if ($Food->image) {
+                Storage::disk('public')->delete($Food->image);
             }
             $validated['image'] = $request->file('image')->store('uploads', 'public');
         }
 
-        $menu->update($validated);
+        $Food->update($validated);
 
         return response()->json([
-            'message' => 'Menu updated successfully.',
-            'data' => $menu
+            'message' => 'Food updated successfully.',
+            'data' => $Food
         ]);
     }
 
     // Xoá món
     public function destroy($id)
     {
-        $menu = Menu::find($id);
+        $Food = Food::find($id);
 
-        if (!$menu) {
-            return response()->json(['message' => 'Menu not found.'], 404);
+        if (!$Food) {
+            return response()->json(['message' => 'Food not found.'], 404);
         }
 
-        if ($menu->image) {
-            Storage::disk('public')->delete($menu->image);
+        if ($Food->image) {
+            Storage::disk('public')->delete($Food->image);
         }
 
-        $menu->delete();
+        $Food->delete();
 
-        return response()->json(['message' => 'Menu deleted successfully.']);
+        return response()->json(['message' => 'Food deleted successfully.']);
     }
     // tỏng món ăn
     public function stats(){
-        $stats = Menu::count();
+        $stats = Food::count();
         return response() -> json($stats);
     }
 }

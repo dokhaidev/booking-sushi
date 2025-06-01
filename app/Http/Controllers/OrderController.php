@@ -29,15 +29,6 @@ class OrderController extends Controller
         return response()->json($query->get());
     }
 
-    // Chi tiết đơn
-    public function show($id)
-    {
-        $order = Order::with('table', 'customer')->findOrFail($id);
-        return response()->json($order);
-    }
-
-    //  Tạo đơn mới
-
 
     // Cập nhật trạng thái
     public function updateStatus(Request $request, $id)
@@ -58,19 +49,22 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order deleted']);
     }
 
-    //  Lấy đơn theo ngày
-    public function getByDate($date)
-    {
-        $orders = Order::with('table', 'customer')
-            ->where('reservation_date', $date)
-            ->orderBy('reservation_time')
-            ->get();
+        public function show($id)
+        {
+            $order = Order::with([
+                'customer',
+                'tables', // quan hệ nhiều-nhiều với bảng bàn
+                'items.food' // các món ăn trong đơn, nếu có quan hệ food trong OrderItem
+            ])->find($id);
 
-        return response()->json($orders);
-    }
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+
+            return response()->json($order);
+        }
 
 
-    // 💡 Gợi ý bàn theo số khách
 
     // lấy ra đơn hàng
     public function getOrder(){
@@ -90,54 +84,181 @@ class OrderController extends Controller
 
     }
 
-    // Lấy danh sách bàn còn trống theo ngày và giờ
 
     // Đặt nhiều bàn cho 1 khách hàng, tạo 1 hóa đơn (order) cho các bàn đó
     public function bookTables(Request $request)
-    {
-        $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'table_ids' => 'required|array',
-            'table_ids.*' => 'exists:tables,id',
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required|date_format:H:i:s',
-            'payment_method_id' => 'nullable|exists:payment_methods,id',
-            'voucher_id' => 'nullable|exists:vouchers,id',
-            'note' => 'nullable|string',
-            'total_price' => 'required|numeric'
-        ]);
+   {
+    $request->validate([
+        'customer_id' => 'required|exists:customers,id',
+        'guest_count' => 'required|integer|min:1',
+        'reservation_date' => 'required|date',
+        'reservation_time' => 'required|date_format:H:i:s',
+        'payment_method' => 'required|in:cash,momo,vnpay', // validate payment_method thay vì payment_method_id
+        'payment_code' => 'nullable|string',
+        'voucher_id' => 'nullable|exists:vouchers,id',
+        'note' => 'nullable|string',
+        'total_price' => 'required|numeric',
+        'foods' => 'sometimes|array',
+        'foods.*.food_id' => 'required_with:foods|exists:foods,id',
+        'foods.*.quantity' => 'required_with:foods|integer|min:1',
+        'foods.*.price' => 'required_with:foods|numeric',
+        'combos' => 'sometimes|array',
+        'combos.*.combo_id' => 'required_with:combos|exists:combos,id',
+        'combos.*.quantity' => 'required_with:combos|integer|min:1',
+        'combos.*.price' => 'required_with:combos|numeric',
+    ]);
 
-        // 1. Tạo hóa đơn (order) trước
-        $order = Order::create([
-            'customer_id' => $request->customer_id,
-            'payment_method_id' => $request->payment_method_id,
-            'voucher_id' => $request->voucher_id,
-            'total_price' => $request->total_price,
-            'note' => $request->note,
-        ]);
+    $date = $request->reservation_date;
+    $time = $request->reservation_time;
+    $guestCount = $request->guest_count;
 
-        $tableIds = $request->table_ids;
-        $date = $request->reservation_date;
-        $time = $request->reservation_time;
+    // Lấy các bàn còn trống
+    $availableTables = Table::whereDoesntHave('orderTables', function ($q) use ($date, $time) {
+        $q->where('reservation_date', $date)
+          ->where('reservation_time', $time);
+    })->orderByDesc('max_guests')->get();
 
-        // 2. Thêm các bàn vào order_tables, luôn truyền order_id
-        $orderTableIds = [];
-        foreach ($tableIds as $tableId) {
-            $orderTableIds[] = DB::table('order_tables')->insertGetId([
+    $selectedTables = [];
+    $remainingGuests = $guestCount;
+
+    foreach ($availableTables as $table) {
+        if ($remainingGuests <= 0) break;
+        $selectedTables[] = $table->id;
+        $remainingGuests -= $table->max_guests;
+    }
+
+    if ($remainingGuests > 0) {
+        // Nếu không đủ bàn, dồn tất cả vào 1 bàn lớn nhất còn trống
+        $largestTable = $availableTables->first();
+        if ($largestTable) {
+            $selectedTables = [$largestTable->id];
+            $orderTableIds = [
+                DB::table('order_tables')->insertGetId([
+                    'order_id' => null, // sẽ cập nhật lại sau khi tạo order
+                    'table_id' => $largestTable->id,
+                    'reservation_date' => $date,
+                    'reservation_time' => $time,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            ];
+            // Tạo order
+            $order = Order::create([
+                'customer_id' => $request->customer_id,
+                'payment_method' => $request->payment_method,
+                'voucher_id' => $request->voucher_id,
+                'total_price' => $request->total_price,
+                'note' => $request->note,
+            ]);
+            // Cập nhật lại order_id cho order_table vừa tạo
+            DB::table('order_tables')->where('id', $orderTableIds[0])->update(['order_id' => $order->id]);
+
+            // Thêm món ăn nếu có
+            if ($request->has('foods') && is_array($request->foods)) {
+                foreach ($request->foods as $food) {
+                    DB::table('order_items')->insert([
+                        'order_id' => $order->id,
+                        'food_id' => $food['food_id'],
+                        'quantity' => $food['quantity'],
+                        'price' => $food['price'],
+                        'status' => 'pending',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+            // Thêm combo nếu có
+            if ($request->has('combos') && is_array($request->combos)) {
+                foreach ($request->combos as $combo) {
+                    DB::table('order_items')->insert([
+                        'order_id' => $order->id,
+                        'combo_id' => $combo['combo_id'],
+                        'quantity' => $combo['quantity'],
+                        'price' => $combo['price'],
+                        'status' => 'pending',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'message' => 'Không đủ bàn, đã dồn tất cả khách vào 1 bàn lớn nhất còn trống!',
                 'order_id' => $order->id,
-                'table_id' => $tableId,
-                'reservation_date' => $date,
-                'reservation_time' => $time,
+                'order_table_ids' => $orderTableIds,
+                'selected_tables' => $selectedTables,
+                'ordered_foods' => $request->foods ?? [],
+            ]);
+        } else {
+            return response()->json(['message' => 'Không còn bàn nào trống trong khung giờ này!'], 422);
+        }
+    }
+
+    // Tạo order
+    $order = Order::create([
+        'customer_id' => $request->customer_id,
+        'payment_method' => $request->payment_method,
+        'voucher_id' => $request->voucher_id,
+        'combo_id' => $request->combo_id, // lưu combo_id nếu có
+        'total_price' => $request->total_price,
+        'note' => $request->note,
+    ]);
+
+    // Gán bàn vào order_tables
+    $orderTableIds = [];
+    foreach ($selectedTables as $tableId) {
+        $orderTableIds[] = DB::table('order_tables')->insertGetId([
+            'order_id' => $order->id,
+            'table_id' => $tableId,
+            'reservation_date' => $date,
+            'reservation_time' => $time,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    // Thêm món ăn nếu có
+    if ($request->has('foods') && is_array($request->foods)) {
+        foreach ($request->foods as $food) {
+            DB::table('order_items')->insert([
+                'order_id' => $order->id,
+                'food_id' => $food['food_id'],
+                'quantity' => $food['quantity'],
+                'price' => $food['price'],
+                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
-
-        return response()->json([
-            'message' => 'Đặt bàn thành công',
-            'order_id' => $order->id,
-            'order_table_ids' => $orderTableIds,
-            'booked_tables' => $tableIds,
-        ]);
     }
+    // Thêm combo nếu có
+    if ($request->has('combos') && is_array($request->combos)) {
+        foreach ($request->combos as $combo) {
+            DB::table('order_items')->insert([
+                'order_id' => $order->id,
+                'combo_id' => $combo['combo_id'],
+                'quantity' => $combo['quantity'],
+                'price' => $combo['price'],
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    // Sau khi thanh toán thành công, tự tạo payment_code (ví dụ: random chuỗi)
+    // Ví dụ: nếu bạn muốn tạo mã khi status là confirmed
+    if ($order->status === 'confirmed' && empty($order->payment_code)) {
+        $order->payment_code = strtoupper(uniqid('PAY'));
+        $order->save();
+    }
+
+    return response()->json([
+        'message' => 'Đặt bàn thành công',
+        'order_id' => $order->id,
+        'ids_tables' => $orderTableIds,
+        'selected_tables' => $selectedTables,
+        'ordered_foods' => $request->foods ?? [],
+    ]);
+   }
 }

@@ -32,6 +32,7 @@ class CustomerController extends Controller
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
+
         ]);
 
         $token = $customer->createToken('authen_token')->plainTextToken;
@@ -43,7 +44,7 @@ class CustomerController extends Controller
         ], 201);
     }
 
-  
+
     public function login(Request $request)
     {
         $request->validate([
@@ -74,7 +75,7 @@ class CustomerController extends Controller
         return response()->json($customer);
     }
 
-  
+
     public function update(Request $request, string $id)
     {
         $customer = Customers::find($id);

@@ -14,6 +14,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CustomerSeeder::class,
             TableSeeder::class,
+            CategorySeeder::class,
+            FoodSeeder::class,
+            ComboSeeder::class,
+            ComboItemSeeder::class,
             // Thêm các seeder khác nếu cần
         ]);
     }

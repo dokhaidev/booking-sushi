@@ -10,6 +10,15 @@ class CustomerSeeder extends Seeder
 {
     public function run()
     {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        // Truncate the table
+        DB::table('customers')->truncate();
+
+        // Enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
         DB::table('customers')->insert([
             [
                 'name' => 'Nguyen Van A',

@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
-            $table->integer('table_number')->unique();
-            $table->integer('size');
+            $table->string('table_number')->unique();
             $table->integer('max_guests');
-            $table->boolean('status')->default(true); // true: available, false: occupied
+            $table->string('status')->default('available'); // available, reserved, occupied
             $table->timestamps();
         });
     }

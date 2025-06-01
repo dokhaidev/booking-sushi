@@ -30,59 +30,81 @@ class TableController extends Controller
         return response()->json($tables);
     }
 
-public function availableTimes(Request $request)
-{
-    $request->validate([
-        'reservation_date' => 'required|date'
-    ]);
-
-    $date = $request->reservation_date;
-    $times = [
-        '10:00', '12:15', '14:30', '16:45', '18:00', '20:15', '22:30'
-    ];
-
-    $availableSlots = [];
-
-    foreach ($times as $time) {
-        $reservationDateTime = Carbon::parse("$date $time");
-        $startWindow = $reservationDateTime->copy()->subHours(2);
-        $endWindow = $reservationDateTime->copy()->addHours(2);
-
-        // Sử dụng quan hệ orderTables thay vì orders
-        $availableTables = Table::whereDoesntHave('orderTables', function ($q) use ($date, $startWindow, $endWindow) {
-            $q->where('reservation_date', $date)
-              ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
-              ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'));
-        })
-        ->get();
-
-        if ($availableTables->count() > 0) {
-            $availableSlots[] = [
-                'time' => $time,
-                'tables' => $availableTables->map(function($table) {
-                    return [
-                        'table_number' => $table->table_number,
-                        'max_guests' => $table->max_guests
-                    ];
-                })
-            ];
-        }
-    }
-    return response()->json([
-        'date' => $date,
-        'available_slots' => $availableSlots
-    ]);
-}
-    public function show($id)
+    public function availableTimes(Request $request)
     {
-        $table = Table::find($id);
+        $request->validate([
+            'reservation_date' => 'required|date',
+            'number_of_guests' => 'required|integer|min:1'
+        ]);
 
-        if (!$table) {
-            return response()->json(['message' => 'Table not found'], 404);
+        $date = $request->reservation_date;
+        $numberOfGuests = $request->number_of_guests;
+
+        // Kiểm tra xem có bàn phù hợp không
+        $tables = Table::where('max_guests', '>=', $numberOfGuests)
+                      ->where('status', 'available')
+                      ->get();
+
+        if ($tables->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy bàn phù hợp với số lượng khách',
+                'number_of_guests' => $numberOfGuests
+            ], 404);
         }
 
-        return response()->json($table);
+        $times = [
+            '10:00', '12:15', '14:30', '16:45',
+            '18:00', '20:15', '22:30'
+        ];
+
+        $availableSlots = [];
+
+        foreach ($tables as $table) {
+            // Lấy các đơn đặt của bàn này trong ngày đã chọn
+            $bookedTimes = $table->orderTables()
+                ->where('reservation_date', $date)
+                ->pluck('reservation_time')
+                ->map(function($time) {
+                    return substr($time, 0, 8);
+                })
+                ->toArray();
+
+            // Tính các khung giờ còn trống
+            $availableTimes = array_filter($times, function($time) use ($bookedTimes) {
+                return !in_array($time, $bookedTimes);
+            });
+
+            if (!empty($availableTimes)) {
+                $availableSlots[] = [
+                    'available_times' => array_values($availableTimes)
+                ];
+            }
+        }
+
+        if (empty($availableSlots)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không có khung giờ trống cho ngày đã chọn',
+                'date' => $date
+            ], 404);
+        }
+
+        return response()->json([
+            'available_tables' => $availableSlots
+        ]);
     }
+
+    // public function show($id)
+    // {
+    //     $table = Table::find($id);
+
+    //     if (!$table) {
+    //         return response()->json(['message' => 'Table not found'], 404);
+    //     }
+
+    //     return response()->json($table);
+    // }
 
     // Tạo mới bàn
     public function store(Request $request)
@@ -109,7 +131,6 @@ public function availableTimes(Request $request)
 
         $validated = $request->validate([
             'table_number' => 'required|string|max:255|unique:tables,table_number,' . $id,
-            'size' => 'required|integer|min:1',
             'max_guests' => 'required|integer|min:1',
             'status' => 'required|in:available,reserved,occupied',
         ]);
