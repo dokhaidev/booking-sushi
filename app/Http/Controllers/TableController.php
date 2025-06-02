@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TableController extends Controller
 {
@@ -33,51 +34,53 @@ class TableController extends Controller
     public function availableTimes(Request $request)
     {
         $request->validate([
-            'reservation_date' => 'required|date',
-            'number_of_guests' => 'required|integer|min:1'
+            'reservation_date' => 'required|date|after_or_equal:today'
         ]);
 
         $date = $request->reservation_date;
-        $numberOfGuests = $request->number_of_guests;
 
-        // Kiểm tra xem có bàn phù hợp không
-        $tables = Table::where('max_guests', '>=', $numberOfGuests)
-                      ->where('status', 'available')
-                      ->get();
-
-        if ($tables->isEmpty()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Không tìm thấy bàn phù hợp với số lượng khách',
-                'number_of_guests' => $numberOfGuests
-            ], 404);
-        }
-
-        $times = [
-            '10:00', '12:15', '14:30', '16:45',
-            '18:00', '20:15', '22:30'
+        // Định nghĩa các khung giờ có thể đặt
+        $timeSlots = [
+            '10:00:00' => '10:00',
+            '12:15:00' => '12:15',
+            '14:30:00' => '14:30',
+            '16:45:00' => '16:45',
+            '18:00:00' => '18:00',
+            '20:15:00' => '20:15',
+            '22:30:00' => '22:30'
         ];
 
-        $availableSlots = [];
+        // Lấy tất cả bàn có sẵn
+        $tables = Table::where('status', 'available')->get();
 
-        foreach ($tables as $table) {
-            // Lấy các đơn đặt của bàn này trong ngày đã chọn
-            $bookedTimes = $table->orderTables()
-                ->where('reservation_date', $date)
-                ->pluck('reservation_time')
-                ->map(function($time) {
-                    return substr($time, 0, 8);
-                })
-                ->toArray();
-
-            // Tính các khung giờ còn trống
-            $availableTimes = array_filter($times, function($time) use ($bookedTimes) {
-                return !in_array($time, $bookedTimes);
+        // Lấy tất cả đơn đặt trong ngày được chọn
+        $bookedSlots = DB::table('order_tables')
+            ->where('reservation_date', $date)
+            ->select('table_id', 'reservation_time')
+            ->get()
+            ->groupBy('reservation_time')
+            ->map(function($items) {
+                return $items->pluck('table_id')->toArray();
             });
 
-            if (!empty($availableTimes)) {
+        // Kiểm tra từng khung giờ
+        $availableSlots = [];
+        foreach ($timeSlots as $dbTime => $displayTime) {
+            $tablesAvailable = $tables->filter(function($table) use ($bookedSlots, $dbTime) {
+                return !isset($bookedSlots[$dbTime]) || !in_array($table->id, $bookedSlots[$dbTime]);
+            });
+
+            if ($tablesAvailable->isNotEmpty()) {
                 $availableSlots[] = [
-                    'available_times' => array_values($availableTimes)
+                    'time' => $displayTime,
+                    'tables_count' => $tablesAvailable->count(),
+                    'available_tables' => $tablesAvailable->map(function($table) {
+                        return [
+                            'table_id' => $table->id,
+                            'table_number' => $table->table_number,
+                            'max_guests' => $table->max_guests
+                        ];
+                    })->values()
                 ];
             }
         }
@@ -85,13 +88,15 @@ class TableController extends Controller
         if (empty($availableSlots)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Không có khung giờ trống cho ngày đã chọn',
+                'message' => 'Không có khung giờ trống nào cho ngày đã chọn',
                 'date' => $date
             ], 404);
         }
 
         return response()->json([
-            'available_tables' => $availableSlots
+            'status' => 'success',
+            'date' => $date,
+            'available_slots' => $availableSlots
         ]);
     }
 

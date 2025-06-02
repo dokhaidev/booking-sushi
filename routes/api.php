@@ -34,10 +34,10 @@ Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);// ƒê·
 
 
 // menu
-Route::get('/menu', [FoodController::class, 'index']);
-Route::post('insert-menu', [FoodController::class, 'store']);
-Route::put('menu-update/{id}', [FoodController::class, 'update']);
-Route::delete('menu-delete/{id}', [FoodController::class, 'destroy']);
+Route::get('/food', [FoodController::class, 'index']);
+Route::post('insert-food', [FoodController::class, 'store']);
+Route::put('food-update/{id}', [FoodController::class, 'update']);
+Route::delete('food-delete/{id}', [FoodController::class, 'destroy']);
 
 // category
 Route::get('/category', [CategoryController::class, 'index']);

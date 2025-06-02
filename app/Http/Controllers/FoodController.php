@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Food;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Constraint\Count;
 
 class FoodController extends Controller
 {
     // Lấy danh sách Food
     public function index()
     {
-        $Foods = Food::all();
-        return response()->json($Foods);
+        $foods = Food::get();
+        return response()->json($foods);
     }
 
     // Tạo món mới
@@ -24,21 +23,18 @@ class FoodController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'tag' => 'required|in:hot,new',
-            'status' => 'required|in:available,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            "tag" => "required"
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('uploads', 'public');
+            $validated['image'] = $request->file('image')->store('foods', 'public');
         }
 
-        $Food = Food::create($validated);
+        $food = Food::create($validated);
 
         return response()->json([
             'message' => 'Food created successfully.',
-            'data' => $Food
+            'data' => $food->load('category')
         ], 201);
     }
 
@@ -57,9 +53,9 @@ class FoodController extends Controller
     // Cập nhật món
     public function update(Request $request, $id)
     {
-        $Food = Food::find($id);
+        $food = Food::find($id);
 
-        if (!$Food) {
+        if (!$food) {
             return response()->json(['message' => 'Food not found.'], 404);
         }
 
@@ -68,23 +64,22 @@ class FoodController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
-            'tag' => 'sometimes|in:hot,new',
-            'status' => 'sometimes|in:available,unavailable',
+            'status' => 'sometimes|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            if ($Food->image) {
-                Storage::disk('public')->delete($Food->image);
+            if ($food->image) {
+                Storage::disk('public')->delete($food->image);
             }
-            $validated['image'] = $request->file('image')->store('uploads', 'public');
+            $validated['image'] = $request->file('image')->store('foods', 'public');
         }
 
-        $Food->update($validated);
+        $food->update($validated);
 
         return response()->json([
             'message' => 'Food updated successfully.',
-            'data' => $Food
+            'data' => $food->load('category')
         ]);
     }
 
@@ -106,8 +101,5 @@ class FoodController extends Controller
         return response()->json(['message' => 'Food deleted successfully.']);
     }
     // tỏng món ăn
-    public function stats(){
-        $stats = Food::count();
-        return response() -> json($stats);
-    }
+
 }
