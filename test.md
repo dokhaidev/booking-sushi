@@ -80,3 +80,27 @@ http://127.0.0.1:8000/api/forgot-password // gửi mail
 lấy danh sách giờ và bàn trống dựa vào số ngày GET
 
 http://127.0.0.1:8000/api/tables/available-times?reservation_date=2025-07-02
+
+===========================================
+
+
+lấy danh sách món ăn theo category GET
+http://127.0.0.1:8000/api/food/category/{id}
+
+
+======================
+ Đăng nhập POST
+http://127.0.0.1:8000/api/login
+
+ {
+     "name": "Test User",
+    "email": "test@example.com",
+    "password": "password123",
+    "phone": "0123456789"
+}
+======================
+ Đăng Ký POST
+ {
+    "email": "test@example.com",
+    "password": "password123"
+}

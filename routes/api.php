@@ -14,11 +14,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::get('/tables', [TableController::class, 'index']);        // List
-// Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
+Route::get('/tables/{id}', [TableController::class, 'show']);    // Detail
 Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
-Route::get('/tables/available-times', [TableController::class, 'availableTimes']); // Kiểm tra giờ trống
+Route::post('/tables/DateTime', [TableController::class, 'availableTimes']); // lấy ra g iờ trống của bàn theo ngày và số lượng người
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
 Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
@@ -33,11 +33,12 @@ Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);// Đ�
 
 
 
-// menu
+// food
 Route::get('/food', [FoodController::class, 'index']);
 Route::post('insert-food', [FoodController::class, 'store']);
 Route::put('food-update/{id}', [FoodController::class, 'update']);
 Route::delete('food-delete/{id}', [FoodController::class, 'destroy']);
+Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory']);
 
 // category
 Route::get('/category', [CategoryController::class, 'index']);
@@ -46,13 +47,16 @@ Route::put('category-update/{id}', [CategoryController::class, 'update']);
 Route::delete('category-delete/{id}', [CategoryController::class, 'destroy']);
 
 
-Route::get('/stat-menu', [FoodController::class, "stats"]);
+Route::get('/stat-food', [FoodController::class, "stats"]);
 // cate
 Route::get('/category', [CategoryController::class, "index"]);
 //
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
-Route::put('menu/{id}', [FoodController::class, 'update']);
+Route::put('food/{id}', [FoodController::class, 'update']);
 // customer
+
+
+
 Route::post('/login', [CustomerController::class, "login"]);
 Route::post('/register', [CustomerController::class, "store"]);
 Route::middleware('auth:sanctum')->group(function () {

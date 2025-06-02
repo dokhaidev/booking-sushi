@@ -9,10 +9,32 @@ use Illuminate\Support\Facades\Storage;
 class FoodController extends Controller
 {
     // Lấy danh sách Food
-    public function index()
+    public function index(Request $request)
     {
-        $foods = Food::get();
-        return response()->json($foods);
+        $query = Food::get();
+
+        return response()->json([
+            'data' => $query
+        ]);
+    }
+
+    public function getFoodsByCategory($categoryId)
+    {
+        $foods = Food::where('category_id', $categoryId)
+                    ->where('status', true)
+                    ->with('category')
+                    ->get();
+
+        if ($foods->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy món ăn trong danh mục này'
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $foods
+        ]);
     }
 
     // Tạo món mới
