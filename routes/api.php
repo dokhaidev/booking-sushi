@@ -8,7 +8,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderTableController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
@@ -28,8 +30,9 @@ Route::post('/reservation', [OrderController::class, 'store']);             // T
 
 // Chi tiết, cập nhật, xoá
 Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
-Route::patch('/updateStatus-order/{id}/status', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
-Route::delete('/delete-order/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
+Route::patch('/order/update/status/{id}', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
+Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
+Route::get('/tables/token/{token}', [TableController::class, 'getTableInfo']);
 
 
 
@@ -49,7 +52,7 @@ Route::delete('category-delete/{id}', [CategoryController::class, 'destroy']);
 Route::get('/stat-menu', [MenuController::class, "stats"]);
 // cate
 Route::get('/category', [CategoryController::class, "index"]);
-//
+// gg
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::put('menu/{id}', [MenuController::class, 'update']);
 Route::delete('menu/{id}', [MenuController::class, 'destroy']);
@@ -61,8 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 
-// login Google
-Route::post('/orders/book-tables', [OrderController::class, 'bookTables']);
+Route::post('', [OrderController::class, 'bookTables']);
 
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
@@ -83,4 +85,7 @@ Route::get('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'sh
 Route::put('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'update']); // cập nhật
 Route::delete('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'destroy']); // xoá
 
-Route::post('/applyVoucher', [\App\Http\Controllers\OrderController::class, 'applyVoucher']);
+Route::post('/applyVoucher', [\App\Http\Controllers\VoucherController::class, 'applyVoucher']);
+
+Route::post('/table/info/{token}', [OrderTableController::class, 'getTableInfo']); // kiểm tra bàn
+Route::post('/orderItem/add', [OrderItemController::class, 'addItem']);

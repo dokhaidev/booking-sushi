@@ -14,9 +14,9 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
         DB::table('orders')->insert([
-            ['customer_id' => 1, 'total_price' => 150000, 'payment_method_id' => 1, 'voucher_id' => 1, 'status' => 'completed'],
-            ['customer_id' => 2, 'total_price' => 200000, 'payment_method_id' => 2, 'voucher_id' => 2, 'status' => 'pending'],
-            ['customer_id' => 3, 'total_price' => 100000, 'payment_method_id' => 3, 'voucher_id' => 3, 'status' => 'cancelled'],
+            ['customer_id' => 1, 'total_price' => 150000, 'payment_method_id' => 1, 'status' => 'pending'],
+            ['customer_id' => 2, 'total_price' => 200000, 'payment_method_id' => 2, 'status' => 'pending'],
+            ['customer_id' => 3, 'total_price' => 100000, 'payment_method_id' => 3, 'status' => 'cancelled'],
         ]);
     }
 }

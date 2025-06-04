@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\orderTable;
 use App\Models\Customer;
 use Illuminate\Support\Carbon;
 
@@ -30,49 +31,55 @@ class TableController extends Controller
         return response()->json($tables);
     }
 
-public function availableTimes(Request $request)
-{
-    $request->validate([
-        'reservation_date' => 'required|date'
-    ]);
+    public function availableTimes(Request $request)
+    {
+        $request->validate([
+            'reservation_date' => 'required|date'
+        ]);
 
-    $date = $request->reservation_date;
-    $times = [
-        '10:00', '12:15', '14:30', '16:45', '18:00', '20:15', '22:30'
-    ];
+        $date = $request->reservation_date;
+        $times = [
+            '10:00',
+            '12:15',
+            '14:30',
+            '16:45',
+            '18:00',
+            '20:15',
+            '22:30'
+        ];
 
-    $availableSlots = [];
+        $availableSlots = [];
 
-    foreach ($times as $time) {
-        $reservationDateTime = Carbon::parse("$date $time");
-        $startWindow = $reservationDateTime->copy()->subHours(2);
-        $endWindow = $reservationDateTime->copy()->addHours(2);
+        foreach ($times as $time) {
+            $reservationDateTime = Carbon::parse("$date $time");
+            $startWindow = $reservationDateTime->copy()->subHours(2);
+            $endWindow = $reservationDateTime->copy()->addHours(2);
 
-        // Sử dụng quan hệ orderTables thay vì orders
-        $availableTables = Table::whereDoesntHave('orderTables', function ($q) use ($date, $startWindow, $endWindow) {
-            $q->where('reservation_date', $date)
-              ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
-              ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'));
-        })
-        ->get();
+            // Sử dụng quan hệ orderTables thay vì orders
+            $availableTables = Table::whereDoesntHave('orderTables', function ($q) use ($date, $startWindow, $endWindow) {
+                $q->where('reservation_date', $date)
+                    ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
+                    ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'));
+            })
+                ->get();
 
-        if ($availableTables->count() > 0) {
-            $availableSlots[] = [
-                'time' => $time,
-                'tables' => $availableTables->map(function($table) {
-                    return [
-                        'table_number' => $table->table_number,
-                        'max_guests' => $table->max_guests
-                    ];
-                })
-            ];
+            if ($availableTables->count() > 0) {
+                $availableSlots[] = [
+                    'time' => $time,
+                    'tables' => $availableTables->map(function ($table) {
+                        return [
+                            'table_number' => $table->table_number,
+                            'max_guests' => $table->max_guests
+                        ];
+                    })
+                ];
+            }
         }
+        return response()->json([
+            'date' => $date,
+            'available_slots' => $availableSlots
+        ]);
     }
-    return response()->json([
-        'date' => $date,
-        'available_slots' => $availableSlots
-    ]);
-}
     public function show($id)
     {
         $table = Table::find($id);

@@ -46,8 +46,11 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->status = $request->status ?? 'pending';
         $order->save();
-
-        return response()->json(['message' => 'update thành công', 'order' => $order]);
+        if ($order->status == 'success') {
+            $this->addPoint($order);
+            return response()->json(['message' => 'đã tích điểm']);
+        }
+        return response()->json(['message' => 'Trạng thái đơn hàng đã được cập nhật', 'order' => $order]);
     }
 
     //  Xoá đơn
@@ -100,7 +103,7 @@ class OrderController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'table_ids' => 'required|array',
-            'table_ids.*' => 'exists:tables,id',
+            // 'table_ids.*' => 'exists:tables,id',
             'reservation_date' => 'required|date',
             'reservation_time' => 'required|date_format:H:i:s',
             'payment_method_id' => 'nullable|exists:payment_methods,id',
@@ -142,30 +145,32 @@ class OrderController extends Controller
             'booked_tables' => $tableIds,
         ]);
     }
-    public function applyVoucher(Request  $request)
+
+    public function addPoint($order)
     {
-        $total = $request->total;
-        $voucherCode = $request->code;
-        $voucher = Voucher::where('code', $voucherCode)
-            ->where('status', 'active')
-            ->where('start_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->first();
-        if (!$voucher) {
-            return response()->json(['message' => 'voucher không tồn tại'], 404);
+        $pointsEarned = floor($order->total_price / 10000);
+        $customer = Customer::find($order->customer_id);
+        if (!$customer) {
+            return response()->json(['message' => 'Khách hàng không tồn tại'], 404);
         }
-        if ($voucher->usage_limit <= 0) {
-            return response()->json(['message' => 'Voucher đã hết lượt sử dụng'], 400);
-        }
-
-        $voucher->usage_limit -= 1;
-        $voucher->save();
-        $discount = $voucher->discount_value;
-        $newTotal = max(0, $total - $discount);
-
+        $customer->point += $pointsEarned;
+        $customer->membership_level = $this->calculateMembershipLevel($customer->point);
+        $customer->save();
         return response()->json([
-            'message' => 'Voucher áp dụng thành công',
-            'new_total' => $newTotal,
+            'message' => 'Điểm thưởng đã được cộng',
+            'points' => $customer->point,
         ]);
+    }
+    private function calculateMembershipLevel($points)
+    {
+        if ($points >= 5000) {
+            return 'Kim Cương';
+        } elseif ($points >= 1000) {
+            return 'Vàng';
+        } elseif ($points >= 100) {
+            return 'Bạc';
+        } else {
+            return 'thành viên';
+        }
     }
 }

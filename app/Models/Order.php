@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Order_items;
+use App\Models\OrderItem;
 
 class Order extends Model
 {
@@ -33,7 +33,7 @@ class Order extends Model
     }
     public function items()
     {
-        return $this->hasMany(Order_items::class);
+        return $this->hasMany(OrderItem::class);
     }
     public function voucher()
     {

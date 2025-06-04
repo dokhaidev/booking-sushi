@@ -10,7 +10,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'food_id',
-        'combo_id',
+        // 'combo_id',
         'status',
         'quantity',
         'price',
@@ -21,9 +21,8 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    // Mỗi OrderItem thuộc về một Menu (món ăn)
     public function menu(): BelongsTo
     {
-        return $this->belongsTo(Menu::class);
+        return $this->belongsTo(Food::class);
     }
 }
