@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
             $table->date('reservation_date');
             $table->time('reservation_time');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
-{protected $table = 'order_items';
+{
+    protected $table = 'order_items';
     protected $fillable = [
         'order_id',
         'food_id',
+        // 'combo_id',
         'status',
         'quantity',
         'price',
@@ -21,7 +23,6 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    // Mỗi OrderItem thuộc về một Food (món ăn)
     public function food(): BelongsTo
     {
         return $this->belongsTo(Food::class, 'food_id');

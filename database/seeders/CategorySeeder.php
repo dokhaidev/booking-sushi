@@ -37,6 +37,21 @@ class CategorySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Tráng miệng',
+                'description' => 'Các món tráng miệng ngọt ngào.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Món chính',
+                'description' => 'Các món ăn chính phong phú.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
+        /**
+         * Run the database seeds.
+         */
     }
 }

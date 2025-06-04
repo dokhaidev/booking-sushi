@@ -26,6 +26,25 @@ class ComboSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Combo Đặc Biệt',
+                'description' => 'Combo đặc biệt cho 6 người, gồm sashimi, tempura và đồ uống.',
+                'price' => 800000,
+                'status' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Combo Tráng Miệng',
+                'description' => 'Combo tráng miệng cho 2 người, gồm kem và bánh ngọt.',
+                'price' => 150000,
+                'status' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
+        /**
+         * Run the database seeds.
+         */
     }
 }

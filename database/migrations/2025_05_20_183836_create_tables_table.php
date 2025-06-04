@@ -9,13 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-     public function up()
+    public function up()
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->string('table_number')->unique();
             $table->integer('max_guests');
             $table->string('status')->default('available'); // available, reserved, occupied
+            $table->string('qr_token')->unique();
             $table->timestamps();
         });
     }

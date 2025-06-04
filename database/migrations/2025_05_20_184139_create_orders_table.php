@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('payment_method', ['cash', 'momo', 'vnpay'])->default('cash');
             //mã thanh toán
             $table->string('payment_code')->nullable();
+
             $table->timestamps();
         });
     }

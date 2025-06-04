@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\orderTable;
 use App\Models\Customer;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,56 @@ class TableController extends Controller
     }
 
     public function availableTimes(Request $request)
+
+    {
+        $request->validate([
+            'reservation_date' => 'required|date'
+        ]);
+
+        $date = $request->reservation_date;
+        $times = [
+            '10:00',
+            '12:15',
+            '14:30',
+            '16:45',
+            '18:00',
+            '20:15',
+            '22:30'
+        ];
+
+        $availableSlots = [];
+
+        foreach ($times as $time) {
+            $reservationDateTime = Carbon::parse("$date $time");
+            $startWindow = $reservationDateTime->copy()->subHours(2);
+            $endWindow = $reservationDateTime->copy()->addHours(2);
+
+            // Sử dụng quan hệ orderTables thay vì orders
+            $availableTables = Table::whereDoesntHave('orderTables', function ($q) use ($date, $startWindow, $endWindow) {
+                $q->where('reservation_date', $date)
+                    ->whereTime('reservation_time', '>=', $startWindow->format('H:i:s'))
+                    ->whereTime('reservation_time', '<=', $endWindow->format('H:i:s'));
+            })
+                ->get();
+
+            if ($availableTables->count() > 0) {
+                $availableSlots[] = [
+                    'time' => $time,
+                    'tables' => $availableTables->map(function ($table) {
+                        return [
+                            'table_number' => $table->table_number,
+                            'max_guests' => $table->max_guests
+                        ];
+                    })
+                ];
+            }
+        }
+        return response()->json([
+            'date' => $date,
+            'available_slots' => $availableSlots
+        ]);
+    }
+    public function show(Request $request)
     {
         $request->validate([
             'reservation_date' => 'required|date|after_or_equal:today'
@@ -59,14 +110,14 @@ class TableController extends Controller
             ->select('table_id', 'reservation_time')
             ->get()
             ->groupBy('reservation_time')
-            ->map(function($items) {
+            ->map(function ($items) {
                 return $items->pluck('table_id')->toArray();
             });
 
         // Kiểm tra từng khung giờ
         $availableSlots = [];
         foreach ($timeSlots as $dbTime => $displayTime) {
-            $tablesAvailable = $tables->filter(function($table) use ($bookedSlots, $dbTime) {
+            $tablesAvailable = $tables->filter(function ($table) use ($bookedSlots, $dbTime) {
                 return !isset($bookedSlots[$dbTime]) || !in_array($table->id, $bookedSlots[$dbTime]);
             });
 
@@ -74,7 +125,7 @@ class TableController extends Controller
                 $availableSlots[] = [
                     'time' => $displayTime,
                     'tables_count' => $tablesAvailable->count(),
-                    'available_tables' => $tablesAvailable->map(function($table) {
+                    'available_tables' => $tablesAvailable->map(function ($table) {
                         return [
                             'table_id' => $table->id,
                             'table_number' => $table->table_number,
