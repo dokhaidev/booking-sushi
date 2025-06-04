@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->string('note')->nullable();
             $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'cancelled', 'success'])->default('pending');
             $table->enum('payment_method', ['cash', 'momo', 'vnpay'])->default('cash');
             //mã thanh toán
             $table->string('payment_code')->nullable();

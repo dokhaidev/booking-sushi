@@ -31,18 +31,6 @@ class OrderController extends Controller
     }
 
 
-    // Cập nhật trạng thái
-    public function updateStatus(Request $request, $id)
-    {
-        $order = Order::findOrFail($id);
-        $order->status = $request->status ?? 'pending';
-        $order->save();
-        if ($order->status == 'success') {
-            $this->addPoint($order);
-            return response()->json(['message' => 'đã tích điểm']);
-        }
-        return response()->json(['message' => 'Trạng thái đơn hàng đã được cập nhật', 'order' => $order]);
-    }
 
     //  Xoá đơn
     public function destroy($id)
@@ -305,5 +293,17 @@ class OrderController extends Controller
         } else {
             return 'thành viên';
         }
+    }
+    // Cập nhật trạng thái
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = $request->status ?? 'pending';
+        $order->save();
+        if ($order->status == 'success') {
+            $this->addPoint($order);
+            return response()->json(['message' => 'đã tích điểm']);
+        }
+        return response()->json(['message' => 'Trạng thái đơn hàng đã được cập nhật', 'order' => $order]);
     }
 }
