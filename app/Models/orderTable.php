@@ -13,6 +13,7 @@ class OrderTable extends Model
         'table_id',
         'reservation_date',
         'reservation_time',
+        'status',
     ];
 
     public function order()

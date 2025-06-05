@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
+            $table->string('status')->default('serve');
             $table->date('reservation_date');
             $table->time('reservation_time');
             $table->timestamps();

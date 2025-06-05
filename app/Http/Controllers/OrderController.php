@@ -131,6 +131,7 @@ class OrderController extends Controller
                     'table_id' => $largestTable->id,
                     'reservation_date' => $date,
                     'reservation_time' => $time,
+                    'status' => 'serve',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ])
