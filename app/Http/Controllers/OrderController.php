@@ -153,6 +153,7 @@ class OrderController extends Controller
                         'food_id' => $food['food_id'],
                         'quantity' => $food['quantity'],
                         'price' => $food['price'],
+                        'status' => 'pending',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -166,6 +167,7 @@ class OrderController extends Controller
                         'combo_id' => $combo['combo_id'],
                         'quantity' => $combo['quantity'],
                         'price' => $combo['price'],
+                        'status' => 'pending',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -220,6 +222,7 @@ class OrderController extends Controller
                 'order_id' => $order->id,
                 'food_id' => $food['food_id'],
                 'quantity' => $food['quantity'],
+                'status' => 'pending',
                 'price' => $food['price'],
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -233,6 +236,7 @@ class OrderController extends Controller
                 'order_id' => $order->id,
                 'combo_id' => $combo['combo_id'],
                 'quantity' => $combo['quantity'],
+                'status' => 'pending',
                 'price' => $combo['price'],
                 'created_at' => now(),
                 'updated_at' => now(),

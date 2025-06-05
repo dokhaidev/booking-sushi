@@ -14,6 +14,7 @@ class OrderItem extends Model
         'combo_id',
         'quantity',
         'price',
+        'status',
         'combo_id',
     ];
 
