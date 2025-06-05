@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Food;
+use App\Models\Voucher;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +20,10 @@ class DatabaseSeeder extends Seeder
             FoodSeeder::class,
             ComboSeeder::class,
             ComboItemSeeder::class,
+            VoucherSeeder::class,
+            OrderSeeder::class,
+            OrderItemSeeder::class,
+            FeedbackSeeder::class,
             // Thêm các seeder khác nếu cần
         ]);
     }
