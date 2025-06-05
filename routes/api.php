@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 
-Route::post('', [OrderController::class, 'bookTables']);
+Route::post('orders/bookTables', [OrderController::class, 'bookTables']);
 
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
