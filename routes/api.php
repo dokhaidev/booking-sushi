@@ -67,8 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 
-Route::post('orders/bookTables', [OrderController::class, 'bookTables']);
-
+Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
@@ -84,6 +83,7 @@ Route::get('auth/google/callback', [GoogleController::class, 'callback']);
 
 // voucher
 Route::get('/voucher', [\App\Http\Controllers\VoucherController::class, 'index']); // lấy all
+
 Route::post('/voucher', [\App\Http\Controllers\VoucherController::class, 'store']); // tạo mới
 Route::get('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'show']); // lấy chi tiết
 Route::put('/voucher/{id}', [\App\Http\Controllers\VoucherController::class, 'update']); // cập nhật

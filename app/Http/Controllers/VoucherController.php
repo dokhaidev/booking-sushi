@@ -10,10 +10,29 @@ class VoucherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Voucher::all());
+        $query = Voucher::query();
+
+        if ($request->has('code')) {
+            $query->where('code', 'like', '%' . $request->code . '%');
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('start_date')) {
+            $query->where('start_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date')) {
+            $query->where('end_date', '<=', $request->end_date);
+        }
+
+        return response()->json($query->get());
     }
+
 
 
     public function store(Request $request)

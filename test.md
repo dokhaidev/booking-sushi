@@ -27,7 +27,6 @@ http://127.0.0.1:8000/api/forgot-password // gửi mail
    "password" => "password reset",
     }
 
-
 ====================
 Đặt bàn không kèm món
   http://127.0.0.1:8000/api/orders/bookTables   POST

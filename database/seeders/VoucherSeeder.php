@@ -16,7 +16,7 @@ class VoucherSeeder extends Seeder
         DB::table('vouchers')->insert([
             [
                 'code' => 'VOUCHER-A1B2',
-                'discount_value' => 20,
+                'discount_value' => 20000,
                 'start_date' => '2025-05-01',
                 'end_date' => '2025-06-01',
                 'status' => "active",
@@ -24,7 +24,7 @@ class VoucherSeeder extends Seeder
             ],
             [
                 'code' => 'VOUCHER-C3D4',
-                'discount_value' => 15,
+                'discount_value' => 150000,
                 'start_date' => '2025-05-10',
                 'end_date' => '2025-06-10',
                 'status' => 'expired',
@@ -32,7 +32,7 @@ class VoucherSeeder extends Seeder
             ],
             [
                 'code' => 'VOUCHER-E5F6',
-                'discount_value' => 10,
+                'discount_value' => 100000,
                 'start_date' => '2025-05-15',
                 'end_date' => '2025-06-15',
                 'status' => 'active',
