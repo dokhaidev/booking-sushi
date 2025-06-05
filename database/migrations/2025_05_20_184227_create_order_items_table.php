@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('combo_id')->nullable()->constrained('combos')->nullOnDelete();
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
-            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

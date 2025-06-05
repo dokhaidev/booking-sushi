@@ -14,38 +14,22 @@ class CategorySeeder extends Seeder
 
         DB::table('categories')->insert([
             [
-                'name' => 'Sushi',
-                'description' => 'Các loại sushi truyền thống và hiện đại.',
+                'name' => 'Khai Vị',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Sashimi',
-                'description' => 'Các loại sashimi tươi ngon.',
+                'name' => 'Đồ Uống',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Tempura',
-                'description' => 'Các món chiên tempura giòn rụm.',
+                'name' => 'Cơm & Mì',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Đồ uống',
-                'description' => 'Nước ngọt, trà, rượu sake...',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Tráng miệng',
-                'description' => 'Các món tráng miệng ngọt ngào.',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Món chính',
-                'description' => 'Các món ăn chính phong phú.',
+                'name' => 'Sushi 3 Loại',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

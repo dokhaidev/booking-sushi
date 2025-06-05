@@ -124,10 +124,19 @@ class OrderController extends Controller
         // Nếu không đủ bàn, dồn tất cả vào 1 bàn lớn nhất còn trống
         $largestTable = $availableTables->first();
         if ($largestTable) {
-            $selectedTables = [$largestTable->id];
+            // Tạo order trước
+            $order = Order::create([
+                'customer_id' => $request->customer_id,
+                'payment_method' => $request->payment_method,
+                'voucher_id' => $request->voucher_id,
+                'total_price' => $request->total_price,
+                'status' => 'confirmed',
+                'note' => $request->note,
+            ]);
+            // Sau đó insert order_tables với order_id đã có
             $orderTableIds = [
                 DB::table('order_tables')->insertGetId([
-                    'order_id' => null, // sẽ cập nhật lại sau khi tạo order
+                    'order_id' => $order->id,
                     'table_id' => $largestTable->id,
                     'reservation_date' => $date,
                     'reservation_time' => $time,
@@ -136,17 +145,6 @@ class OrderController extends Controller
                     'updated_at' => now(),
                 ])
             ];
-            // Tạo order
-            $order = Order::create([
-                'customer_id' => $request->customer_id,
-                'payment_method' => $request->payment_method,
-                'voucher_id' => $request->voucher_id,
-                'total_price' => $request->total_price,
-                'note' => $request->note,
-            ]);
-            // Cập nhật lại order_id cho order_table vừa tạo
-            DB::table('order_tables')->where('id', $orderTableIds[0])->update(['order_id' => $order->id]);
-
             // Thêm món ăn nếu có
             if ($request->has('foods') && is_array($request->foods)) {
                 foreach ($request->foods as $food) {
@@ -155,7 +153,6 @@ class OrderController extends Controller
                         'food_id' => $food['food_id'],
                         'quantity' => $food['quantity'],
                         'price' => $food['price'],
-                        'status' => 'pending',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -169,7 +166,6 @@ class OrderController extends Controller
                         'combo_id' => $combo['combo_id'],
                         'quantity' => $combo['quantity'],
                         'price' => $combo['price'],
-                        'status' => 'pending',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -193,10 +189,16 @@ class OrderController extends Controller
         'customer_id' => $request->customer_id,
         'payment_method' => $request->payment_method,
         'voucher_id' => $request->voucher_id,
-        'combo_id' => $request->combo_id, // lưu combo_id nếu có
         'total_price' => $request->total_price,
+        'status' => 'confirmed',
         'note' => $request->note,
     ]);
+
+    // Tự động tạo payment_code nếu status là confirmed
+    if ($order->status === 'confirmed') {
+        $order->payment_code = strtoupper(uniqid('PAY'));
+        $order->save();
+    }
 
     // Gán bàn vào order_tables
     $orderTableIds = [];
@@ -219,7 +221,6 @@ class OrderController extends Controller
                 'food_id' => $food['food_id'],
                 'quantity' => $food['quantity'],
                 'price' => $food['price'],
-                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -233,7 +234,6 @@ class OrderController extends Controller
                 'combo_id' => $combo['combo_id'],
                 'quantity' => $combo['quantity'],
                 'price' => $combo['price'],
-                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

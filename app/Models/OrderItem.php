@@ -12,7 +12,6 @@ class OrderItem extends Model
         'order_id',
         'food_id',
         'combo_id',
-        'status',
         'quantity',
         'price',
         'combo_id',
