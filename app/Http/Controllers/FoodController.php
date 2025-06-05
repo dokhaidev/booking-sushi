@@ -18,6 +18,7 @@ class FoodController extends Controller
         ]);
     }
 
+
     public function getFoodsByCategory($categoryId)
     {
         $foods = Food::where('category_id', $categoryId)
@@ -37,21 +38,22 @@ class FoodController extends Controller
         ]);
     }
 
-    // Tạo món mới
+    // Thêm món mới
     public function store(Request $request)
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'jpName' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'status' => 'sometimes|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('foods', 'public');
         }
-
         $food = Food::create($validated);
 
         return response()->json([
@@ -72,7 +74,7 @@ class FoodController extends Controller
         return response()->json($Food);
     }
 
-    // Cập nhật món
+    // Sửa món ăn
     public function update(Request $request, $id)
     {
         $food = Food::find($id);
@@ -84,6 +86,7 @@ class FoodController extends Controller
         $validated = $request->validate([
             'category_id' => 'sometimes|exists:categories,id',
             'name' => 'sometimes|string|max:255',
+            'jpName' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'status' => 'sometimes|boolean',
@@ -105,20 +108,20 @@ class FoodController extends Controller
         ]);
     }
 
-    // Xoá món
+    // Xoá món ăn
     public function destroy($id)
     {
-        $Food = Food::find($id);
+        $food = Food::find($id);
 
-        if (!$Food) {
+        if (!$food) {
             return response()->json(['message' => 'Food not found.'], 404);
         }
 
-        if ($Food->image) {
-            Storage::disk('public')->delete($Food->image);
+        if ($food->image) {
+            Storage::disk('public')->delete($food->image);
         }
 
-        $Food->delete();
+        $food->delete();
 
         return response()->json(['message' => 'Food deleted successfully.']);
     }

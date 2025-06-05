@@ -29,6 +29,16 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'name' => 'Rolls',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Sashimi',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'name' => 'Sushi 3 Loại',
                 'created_at' => now(),
                 'updated_at' => now(),

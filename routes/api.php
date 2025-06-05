@@ -37,11 +37,12 @@ Route::get('/tables/token/{token}', [TableController::class, 'getTableInfo']);
 
 
 // food
-Route::get('/food', [FoodController::class, 'index']);
-Route::post('insert-food', [FoodController::class, 'store']);
+Route::post('/food/insert-food', [FoodController::class, 'store']);
 Route::put('food-update/{id}', [FoodController::class, 'update']);
 Route::delete('food-delete/{id}', [FoodController::class, 'destroy']);
 Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory']);
+
+
 
 // category
 Route::get('/category', [CategoryController::class, 'index']);
