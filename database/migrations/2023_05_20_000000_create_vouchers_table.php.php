@@ -17,8 +17,9 @@ return new class extends Migration
             $table->float('discount_value');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['active', 'expired', 'disabled']);
+            $table->enum('status', ['active', 'expired', 'disabled'])->default("active");
             $table->integer('usage_limit');
+            $table->integer('required_points')->nullable();
             $table->timestamps();
         });
     }

@@ -13,7 +13,9 @@ class Voucher extends Model
         'start_date',
         'end_date',
         'status',
+        'required_points',
     ];
+
 
     public function orders()
     {

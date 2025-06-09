@@ -21,6 +21,7 @@ class VoucherSeeder extends Seeder
                 'end_date' => '2025-06-01',
                 'status' => "active",
                 'usage_limit' => 50,
+                "required_points" => 200
             ],
             [
                 'code' => 'VOUCHER-C3D4',
@@ -29,6 +30,8 @@ class VoucherSeeder extends Seeder
                 'end_date' => '2025-06-10',
                 'status' => 'expired',
                 'usage_limit' => 30,
+                "required_points" => 1000
+
             ],
             [
                 'code' => 'VOUCHER-E5F6',
@@ -37,6 +40,8 @@ class VoucherSeeder extends Seeder
                 'end_date' => '2025-06-15',
                 'status' => 'active',
                 'usage_limit' => 20,
+                "required_points" => null
+
             ],
         ]);
     }
