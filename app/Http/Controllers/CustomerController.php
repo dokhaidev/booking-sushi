@@ -110,4 +110,11 @@ class CustomerController extends Controller
 
         return response()->json(['message' => 'Đăng xuất thành công']);
     }
+
+    // Lấy danh sách tất cả người dùng cho admin
+    public function listAll()
+    {
+        $customers = Customers::all();
+        return response()->json($customers);
+    }
 }

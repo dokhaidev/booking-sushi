@@ -24,16 +24,29 @@ Route::post('/tables', [TableController::class, 'store']);       // Create
 Route::put('/tables/{id}', [TableController::class, 'update']);  // Update
 Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 Route::post('/tables/DateTime', [TableController::class, 'availableTimes']); // lấy ra g iờ trống của bàn theo ngày và số lượng người
-// routes/api.php
-Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
-
-
-
-// Chi tiết, cập nhật, xoá
-Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
-Route::patch('/order/update/status/{id}', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
-Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
 Route::get('/tables/token/{token}', [TableController::class, 'getTableInfo']);
+
+
+
+// order
+Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
+Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
+Route::put('/order/update-status/{id}', [OrderController::class, 'updateStatus']); // Cập nhật trạng thái
+Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);    // Xoá đơn đặt
+Route::patch('/orderitems/update-status/{id}', [OrderItemController::class, 'updateStatus']);
+Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);
+Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
+
+
+
+
+
+// combo
+Route::get('/combos', [ComboController::class, 'index']); // Lấy danh sách combo
+Route::get('/combos/{id}', [ComboController::class, 'show']); // Lấy chi tiết combo
+Route::post('/combo/insert-combos', [ComboController::class, 'store']); // Tạo mới combo
+Route::put('/combo/update-combo/{id}', [ComboController::class, 'update']); // Cập nhật combo
+
 
 
 
@@ -48,10 +61,15 @@ Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory'])
 
 
 
+
 // category
 Route::get('/category', [CategoryController::class, 'index']);
 Route::post('insert-category', [CategoryController::class, 'store']);
 Route::put('category-update/{id}', [CategoryController::class, 'update']);
+
+
+
+
 
 
 // gg
@@ -61,23 +79,24 @@ Route::put('food/{id}', [FoodController::class, 'update']);
 
 
 
+
+
 Route::post('/login', [CustomerController::class, "login"]);
 Route::post('/register', [CustomerController::class, "store"]);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [CustomerController::class, 'index']);
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
-
-Route::post('/orders/bookTables', [OrderController::class, 'bookTables']);
+Route::get('admin/customers', [CustomerController::class, 'listAll']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 
 
+
+
 // đơn hàng
-Route::get('/orderRecent', [OrderController::class, 'getOrder']);
-Route::get('/statsDashbroad', [OrderController::class, 'statsDashbroad']);
 
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::get('auth/google/callback', [GoogleController::class, 'callback']);

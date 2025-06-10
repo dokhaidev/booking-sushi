@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Combo;
 use App\Models\ComboItem;
+use Illuminate\Support\Facades\Storage;
 class ComboController extends Controller
 {
     /**
@@ -12,7 +13,8 @@ class ComboController extends Controller
      */
     public function index()
     {
-        //
+        $combos = Combo::get();
+        return response()->json($combos);
     }
 
     /**
@@ -31,7 +33,7 @@ class ComboController extends Controller
         // Validate input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|string|max:255',
+            'image' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'status' => 'boolean',
@@ -40,10 +42,16 @@ class ComboController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
+        // Xử lý upload ảnh nếu có
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('combos', 'public');
+        }
+
         // Create combo
         $combo = Combo::create([
             'name' => $validated['name'],
-            'image' => $validated['image'] ?? null,
+            'image' => $imagePath,
             'description' => $validated['description'] ?? null,
             'price' => $validated['price'],
             'status' => $validated['status'] ?? true,
@@ -66,7 +74,8 @@ class ComboController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $combo = Combo::with(['comboItems.food'])->findOrFail($id);
+        return response()->json($combo);
     }
 
     /**
@@ -76,16 +85,12 @@ class ComboController extends Controller
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         // Validate input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|string|max:255',
+            'image' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'status' => 'boolean',
@@ -94,13 +99,19 @@ class ComboController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        // Find combo
         $combo = Combo::findOrFail($id);
+        $imagePath = $combo->image;
+        if ($request->hasFile('image')) {
+            if ($combo->image && Storage::disk('public')->exists($combo->image)) {
+                Storage::disk('public')->delete($combo->image);
+            }
+            $imagePath = $request->file('image')->store('combos', 'public');
+        }
 
         // Update combo
         $combo->update([
             'name' => $validated['name'],
-            'image' => $validated['image'] ?? null,
+            'image' => $imagePath,
             'description' => $validated['description'] ?? null,
             'price' => $validated['price'],
             'status' => $validated['status'] ?? true,
@@ -117,7 +128,6 @@ class ComboController extends Controller
                 'quantity' => $item['quantity'],
             ]);
         }
-
         return response()->json(['message' => 'Combo updated successfully', 'combo' => $combo]);
     }
 
