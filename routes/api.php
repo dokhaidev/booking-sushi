@@ -14,7 +14,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-
+use App\Http\Controllers\ComboController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -26,7 +26,8 @@ Route::delete('/tables/{id}', [TableController::class, 'destroy']); // Delete
 Route::post('/tables/DateTime', [TableController::class, 'availableTimes']); // lấy ra g iờ trống của bàn theo ngày và số lượng người
 // routes/api.php
 Route::get('/orders', [OrderController::class, 'index']);              // Lấy danh sách đơn đặt
-Route::post('/reservation', [OrderController::class, 'store']);             // Tạo đơn đặt mới
+
+
 
 // Chi tiết, cập nhật, xoá
 Route::get('/orders/{id}', [OrderController::class, 'show']);          // Lấy chi tiết đơn
@@ -37,10 +38,13 @@ Route::get('/tables/token/{token}', [TableController::class, 'getTableInfo']);
 
 
 // food
-Route::post('/food/insert-food', [FoodController::class, 'store']);
+Route::get('/foods', [FoodController::class, 'index']);
+Route::get('foods/category/{categoryId}/groups', [FoodController::class, 'foodsByCategoryWithGroups']);
+Route::post('/food/insertfood', [FoodController::class, 'store']);
 Route::put('food-update/{id}', [FoodController::class, 'update']);
-Route::delete('food-delete/{id}', [FoodController::class, 'destroy']);
 Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory']);
+
+
 
 
 
@@ -48,12 +52,8 @@ Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory'])
 Route::get('/category', [CategoryController::class, 'index']);
 Route::post('insert-category', [CategoryController::class, 'store']);
 Route::put('category-update/{id}', [CategoryController::class, 'update']);
-Route::delete('category-delete/{id}', [CategoryController::class, 'destroy']);
 
 
-Route::get('/stat-food', [FoodController::class, "stats"]);
-// cate
-Route::get('/category', [CategoryController::class, "index"]);
 // gg
 Route::get('auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::put('food/{id}', [FoodController::class, 'update']);
