@@ -14,23 +14,25 @@ use Illuminate\Support\Facades\DB;
 class OrderController extends Controller
 {
     //  Danh sách đơn
+    // Lấy danh sách đơn hàng (chỉ trả về danh sách, không kèm chi tiết)
     public function index(Request $request)
     {
-        $query = Order::with('table', 'customer')->latest();
+        $query = Order::query();
 
         if ($request->has('keyword')) {
             $keyword = $request->keyword;
-
             $query->whereHas('customer', function ($q) use ($keyword) {
                 $q->where('name', 'like', "%$keyword%");
-            })->orWhereHas('table', function ($q) use ($keyword) {
+            })->orWhereHas('tables', function ($q) use ($keyword) {
                 $q->where('table_number', 'like', "%$keyword%");
             })->orWhere('status', 'like', "%$keyword%");
         }
-        return response()->json($query->get());
+
+        // Lấy danh sách đơn hàng, có thể kèm customer và tables nếu muốn
+        $orders = $query->with('customer', 'tables')->latest()->get();
+
+        return response()->json($orders);
     }
-
-
 
     //  Xoá đơn
     public function destroy($id)
@@ -41,12 +43,14 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order deleted']);
     }
 
+    // Lấy chi tiết đơn hàng (kèm các quan hệ liên quan)
     public function show($id)
     {
         $order = Order::with([
             'customer',
-            'tables', // quan hệ nhiều-nhiều với bảng bàn
-            'items.food' // các món ăn trong đơn, nếu có quan hệ food trong OrderItem
+            'tables',
+            'items.food',
+            'items.combo'
         ])->find($id);
 
         if (!$order) {
@@ -59,12 +63,7 @@ class OrderController extends Controller
 
 
     // lấy ra đơn hàng
-    public function getOrder()
-    {
-        $order = Order::with("items")
-            ->select("id", "name", "status", "reservation_date", "reservation_time", "total_price")->get();
-        return response()->json($order);
-    }
+
     public function statsDashbroad()
     {
         $totalOrder = Order::where('status', 'confirmed')->count();
@@ -291,12 +290,20 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $order = Order::findOrFail($id);
-        $order->status = $request->status ?? 'pending';
+
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,success,cancelled'
+        ]);
+
+        $order->status = $validated['status'];
         $order->save();
+
+        // Nếu trạng thái là 'success', cộng điểm cho khách hàng
         if ($order->status == 'success') {
             $this->addPoint($order);
-            return response()->json(['message' => 'đã tích điểm']);
+            return response()->json(['message' => 'Đã tích điểm', 'order' => $order]);
         }
+
         return response()->json(['message' => 'Trạng thái đơn hàng đã được cập nhật', 'order' => $order]);
     }
 }

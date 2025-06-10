@@ -73,8 +73,8 @@ http://127.0.0.1:8000/api/tables/available-times?reservation_date=2025-07-02
 
 ===========================================
 
-lấy danh sách món ăn theo category GET
-http://127.0.0.1:8000/api/food/category/{id}
+lấy danh sách món ăn theo category và food_group của food GET
+http://127.0.0.1:8000/api/foods/category/{id_cate}/groups
 
 ======================
 Đăng nhập POST
