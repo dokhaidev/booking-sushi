@@ -53,7 +53,7 @@ Route::put('/combo/update-combo/{id}', [ComboController::class, 'update']); // C
 // food
 Route::get('/foods', [FoodController::class, 'index']);
 Route::get('foods/category/{categoryId}/groups', [FoodController::class, 'foodsByCategoryWithGroups']);
-Route::post('/food/insertfood', [FoodController::class, 'store']);
+Route::post('/food/insert-food', [FoodController::class, 'store']);
 Route::put('food-update/{id}', [FoodController::class, 'update']);
 Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory']);
 

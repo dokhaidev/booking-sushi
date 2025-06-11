@@ -12,7 +12,7 @@ class FoodController extends Controller
     // Lấy danh sách Food theo category và foodgroup nếu có
     public function index(Request $request)
     {
-        $foods = Food::get();
+        $foods = Food::with(['category', 'group'])->get();
         return response()->json([
             'data' => $foods
         ]);
@@ -47,7 +47,6 @@ class FoodController extends Controller
             'jpName' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'status' => 'sometimes|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 

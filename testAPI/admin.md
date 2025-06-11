@@ -3,21 +3,19 @@ http://127.0.0.1:8000/api/foods GET
 
 =====================
 thêm món ăn 
-http://127.0.0.1:8000/api/food/insertfood POST
+http://127.0.0.1:8000/api/food/insert-food POST
 
 {
-  "name": "Sushi Cá Hồi",
-  "jpName":null,
-  "group_id":null,  
-  "price": 120000,
-  "category_id": 1,
-  "description": "Sushi cá hồi tươi ngon",
-  "image": "sushi.jpg"
+    "category_id": 1,
+    "group_id": 2,
+    "name": "Sushi 23123 Hồi",
+    "jpName": "サーモン寿司",
+    "description": "Sushi cá hồi tươi ngon",
+    "price": 120000
 }
-
 =========================
 cập nhập món ăn 
-http://127.0.0.1:8000/api/food/category/{id} PUT
+http://127.0.0.1:8000/api/food-update/{id} PUT
 {
   "name": "Sushi Cá Hồi",
   "jpName":null,
@@ -25,7 +23,6 @@ http://127.0.0.1:8000/api/food/category/{id} PUT
   "price": 120000,
   "category_id": 1,
   "description": "Sushi cá hồi tươi ngon",
-  "image": "sushi.jpg"
 }
 =========================
 lấy ra tất cả combo
@@ -50,7 +47,6 @@ http://127.0.0.1:8000/api/combo/insert-combos POST
 
 {
     "name": "Combo Sushi Đặc Biệt",
-    "image": "combo1.jpg",
     "description": "Combo sushi tổng hợp cho 2 người",
     "price": 299000,
     "status": true,
@@ -70,7 +66,6 @@ http://127.0.0.1:8000/api/update-combo/{id} PUT
 
 {
     "name": "Combo Sushi Siêu Cấp",
-    "image": "combo2.jpg",
     "description": "Combo sushi cho nhóm bạn",
     "price": 399000,
     "status": false,
