@@ -24,6 +24,32 @@ http://127.0.0.1:8000/api/food-update/{id} PUT
   "category_id": 1,
   "description": "Sushi cá hồi tươi ngon",
 }
+
+=================
+lấy ra danh sách foodgroup GET
+
+http://127.0.0.1:8000/api/foodgroups 
+
+===================
+thêm danh sách foodgroup POST
+http://127.0.0.1:8000/api/foodgroup/insert-foodgroup 
+
+{
+    "category_id": 1,
+    "name": "Nhóm Sushi Đặc Biệt"
+}
+==============================
+chỉnh sửa danh sách foodgroup PUT
+http://127.0.0.1:8000/api/foodgroup/update-foodgroup/{id} 
+
+{
+    "category_id": 4
+    "name": "Nhóm Sushi Cao Cấp"
+
+}
+
+
+
 =========================
 lấy ra tất cả combo
 http://127.0.0.1:8000/api/combos GET
@@ -102,3 +128,12 @@ http://127.0.0.1:8000/api/orderitems/update-status/{id} PUT
 ===========================
 lấy ra danh sách người dungf
 http://127.0.0.1:8000/api/admin/customers GET
+
+===============================
+khoá tài khoản người dùng
+
+http://127.0.0.1:8000/api/customers/{id}/status PUT
+
+{
+    "status": 0
+}
