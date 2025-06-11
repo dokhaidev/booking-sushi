@@ -13,7 +13,7 @@ class ComboController extends Controller
      */
     public function index()
     {
-        $combos = Combo::get();
+        $combos = Combo::with(['comboItems.food'])->get();
         return response()->json($combos);
     }
 
