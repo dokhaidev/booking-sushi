@@ -117,4 +117,27 @@ class CustomerController extends Controller
         $customers = Customers::all();
         return response()->json($customers);
     }
+
+    // Khoá hoặc mở khoá tài khoản khách hàng
+    public function lockUnlock($id, Request $request)
+    {
+        $customer = Customers::find($id);
+        if (!$customer) {
+            return response()->json(['message' => 'Không tìm thấy khách hàng'], 404);
+        }
+
+        $request->validate([
+            'status' => 'required|in:active,locked,0,1'
+        ]);
+
+        // Nếu dùng kiểu boolean: 1 (active), 0 (locked)
+        // Nếu dùng kiểu string: 'active', 'locked'
+        $customer->status = $request->status;
+        $customer->save();
+
+        return response()->json([
+            'message' => $customer->status == 'locked' || $customer->status == 0 ? 'Đã khoá tài khoản' : 'Đã mở khoá tài khoản',
+            'customer' => $customer
+        ]);
+    }
 }

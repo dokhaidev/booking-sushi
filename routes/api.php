@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ComboController;
+use App\Http\Controllers\FoodgroupController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -53,10 +54,14 @@ Route::put('/combo/update-combo/{id}', [ComboController::class, 'update']); // C
 // food
 Route::get('/foods', [FoodController::class, 'index']);
 Route::get('foods/category/{categoryId}/groups', [FoodController::class, 'foodsByCategoryWithGroups']);
-Route::post('/food/insertfood', [FoodController::class, 'store']);
+Route::post('/food/insert-food', [FoodController::class, 'store']);
 Route::put('food-update/{id}', [FoodController::class, 'update']);
 Route::get('/food/category/{id}', [FoodController::class, 'getFoodsByCategory']);
 
+// foodgroup
+Route::get('/foodgroups', [\App\Http\Controllers\FoodgroupController::class, 'index']);
+Route::post('/foodgroup/insert-foodgroup', [\App\Http\Controllers\FoodgroupController::class, 'store']);
+Route::put('/foodgroup/update-foodgroup/{id}', [\App\Http\Controllers\FoodgroupController::class, 'update']);
 
 
 
@@ -88,8 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', [CustomerController::class, 'destroy']);
 });
 Route::get('admin/customers', [CustomerController::class, 'listAll']);
-
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::put('customers/{id}/status', [CustomerController::class, 'lockUnlock']);Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 

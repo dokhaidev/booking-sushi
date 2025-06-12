@@ -3,21 +3,19 @@ http://127.0.0.1:8000/api/foods GET
 
 =====================
 thêm món ăn 
-http://127.0.0.1:8000/api/food/insertfood POST
+http://127.0.0.1:8000/api/food/insert-food POST
 
 {
-  "name": "Sushi Cá Hồi",
-  "jpName":null,
-  "group_id":null,  
-  "price": 120000,
-  "category_id": 1,
-  "description": "Sushi cá hồi tươi ngon",
-  "image": "sushi.jpg"
+    "category_id": 1,
+    "group_id": 2,
+    "name": "Sushi 23123 Hồi",
+    "jpName": "サーモン寿司",
+    "description": "Sushi cá hồi tươi ngon",
+    "price": 120000
 }
-
 =========================
 cập nhập món ăn 
-http://127.0.0.1:8000/api/food/category/{id} PUT
+http://127.0.0.1:8000/api/food-update/{id} PUT
 {
   "name": "Sushi Cá Hồi",
   "jpName":null,
@@ -25,8 +23,33 @@ http://127.0.0.1:8000/api/food/category/{id} PUT
   "price": 120000,
   "category_id": 1,
   "description": "Sushi cá hồi tươi ngon",
-  "image": "sushi.jpg"
 }
+
+=================
+lấy ra danh sách foodgroup GET
+
+http://127.0.0.1:8000/api/foodgroups 
+
+===================
+thêm danh sách foodgroup POST
+http://127.0.0.1:8000/api/foodgroup/insert-foodgroup 
+
+{
+    "category_id": 1,
+    "name": "Nhóm Sushi Đặc Biệt"
+}
+==============================
+chỉnh sửa danh sách foodgroup PUT
+http://127.0.0.1:8000/api/foodgroup/update-foodgroup/{id} 
+
+{
+    "category_id": 4
+    "name": "Nhóm Sushi Cao Cấp"
+
+}
+
+
+
 =========================
 lấy ra tất cả combo
 http://127.0.0.1:8000/api/combos GET
@@ -50,7 +73,6 @@ http://127.0.0.1:8000/api/combo/insert-combos POST
 
 {
     "name": "Combo Sushi Đặc Biệt",
-    "image": "combo1.jpg",
     "description": "Combo sushi tổng hợp cho 2 người",
     "price": 299000,
     "status": true,
@@ -70,7 +92,6 @@ http://127.0.0.1:8000/api/update-combo/{id} PUT
 
 {
     "name": "Combo Sushi Siêu Cấp",
-    "image": "combo2.jpg",
     "description": "Combo sushi cho nhóm bạn",
     "price": 399000,
     "status": false,
@@ -107,3 +128,12 @@ http://127.0.0.1:8000/api/orderitems/update-status/{id} PUT
 ===========================
 lấy ra danh sách người dungf
 http://127.0.0.1:8000/api/admin/customers GET
+
+===============================
+khoá tài khoản người dùng
+
+http://127.0.0.1:8000/api/customers/{id}/status PUT
+
+{
+    "status": 0
+}
