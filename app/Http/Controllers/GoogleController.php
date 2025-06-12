@@ -9,18 +9,18 @@ class GoogleController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        $googleUser = Socialite::driver('google')->user();
         $user = Customer::firstOrCreate(
             ['email' => $googleUser->getEmail()],
             [
                 'name' => $googleUser->getName(),
                 'google_id' => $googleUser->getId(),
-                'password' => bcrypt(Str::random(16)), // bắt buộc nếu bạn có validate password
+                'password' => bcrypt(Str::random(16)), 
             ]
         );
 
@@ -29,4 +29,3 @@ class GoogleController extends Controller
         return redirect("http://localhost:30003/google/callback?token=$token");
     }
 }
-
